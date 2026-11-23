@@ -1,0 +1,50 @@
+{
+  "voice": "am_michael",
+  "speed": 1.15,
+  "gap": 0.28,
+  "duration": 22.011,
+  "lines": [
+    {
+      "line": 1,
+      "text": "In this Roblox game, you get to troll your friends.",
+      "start": 0.0,
+      "end": 2.987
+    },
+    {
+      "line": 2,
+      "text": "Before every fight, you pick your trolls.",
+      "start": 3.267,
+      "end": 5.507
+    },
+    {
+      "line": 3,
+      "text": "Flip their screen, drop a banana, and watch them slide right off the map.",
+      "start": 5.787,
+      "end": 9.968
+    },
+    {
+      "line": 4,
+      "text": "Every bonk fills your elixir, and when it's full, you drop this.",
+      "start": 10.248,
+      "end": 13.768
+    },
+    {
+      "line": 5,
+      "text": "Now they're all flying.",
+      "start": 14.048,
+      "end": 15.541
+    },
+    {
+      "line": 6,
+      "text": "So grab your whole squad, like this video, and add it to your favorites.",
+      "start": 15.821,
+      "end": 19.853
+    },
+    {
+      "line": 7,
+      "text": "The game is called Troll Duels.",
+      "start": 20.133,
+      "end": 22.011
+    }
+  ]
+}
