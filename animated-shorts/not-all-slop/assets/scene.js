@@ -281,9 +281,9 @@ const A = V(90, 40, 0);
   x.fillStyle = '#fffaf0'; x.fillRect(0, 504, 1024, 16); x.beginPath(); x.arc(512, 512, 120, 0, 7); x.fillStyle = '#7b3fe4'; x.fill(); x.lineWidth = 16; x.strokeStyle = '#fffaf0'; x.stroke(); star0(x, 512, 512, 80, 34, 5, '#ffd23f', 8);
   const top = new THREE.Mesh(new THREE.CylinderGeometry(7, 7, 1.4, 48), [lam({ color: 0x5aa83c }), lam({ map: tex(fc) }), lam({ color: 0x5aa83c })]); top.position.set(A.x, A.y - 0.7, A.z); add(top);
   const under = new THREE.Mesh(new THREE.ConeGeometry(7, 10, 12, 3), mats.rock); under.rotation.x = Math.PI; under.position.set(A.x, A.y - 6.4, A.z); add(under);
-  const bc = cv(1024, 280), bx = bc.getContext('2d'); bx.fillStyle = '#7b3fe4'; bx.fillRect(0, 0, 1024, 280); bx.strokeStyle = '#ffd23f'; bx.lineWidth = 18; bx.strokeRect(9, 9, 1006, 262); txt(bx, 'TROLL DUELS', 512, 148, 150, '#ffd23f', PLUM, 16);
-  for (const s of [-1, 1]) cyl(0.22, 0.22, 6.0, mats.wood, A.x + s * 4.6, A.y + 3.0, A.z - 5.2, 8);
-  const ban = new THREE.Mesh(new THREE.PlaneGeometry(9.6, 2.6), lam({ map: tex(bc), side: THREE.DoubleSide })); ban.position.set(A.x, A.y + 5.0, A.z - 5.2); add(ban);
+  const bc = cv(1024, 280), bx = bc.getContext('2d'); bx.fillStyle = '#7b3fe4'; bx.fillRect(0, 0, 1024, 280); bx.strokeStyle = '#ffd23f'; bx.lineWidth = 18; bx.strokeRect(9, 9, 1006, 262); bx.font = `900 150px ${FONT}`; const bs = Math.min(150, Math.floor(150 * 900 / bx.measureText('TROLL DUELS').width)); txt(bx, 'TROLL DUELS', 512, 148, bs, '#ffd23f', PLUM, 16);  // shrink to fit the banner
+  for (const s of [-1, 1]) cyl(0.22, 0.22, 6.0, mats.wood, A.x + s * 3.2, A.y + 3.0, A.z - 5.2, 8);
+  const ban = new THREE.Mesh(new THREE.PlaneGeometry(6.6, 1.8), lam({ map: tex(bc), side: THREE.DoubleSide })); ban.position.set(A.x, A.y + 5.0, A.z - 5.2); add(ban);
   for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; if (Math.abs(Math.sin(a)) < 0.3 && Math.cos(a) > 0) continue; cyl(0.12, 0.12, 0.7, mats.yellow, A.x + Math.cos(a) * 6.75, A.y + 0.35, A.z + Math.sin(a) * 6.75, 8); }
 }
 const soonSign = new THREE.Group(); scene.add(soonSign);

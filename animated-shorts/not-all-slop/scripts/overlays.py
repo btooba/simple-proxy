@@ -54,7 +54,7 @@ badge("bBuild", tb, 1.5, "BUILD", "ROBLOX'S AI GAME MAKER")
 num("n500", at("half"), at("robloxs") - 0.1, "500,000", "PEOPLE TRIED IT")
 badge("bPeak", at("peak"), 1.9, "PEAK", "INDIE GAME · AGGRO CRAB")
 num("n80", at("80"), at("see") - 0.35, "80%", "OF ROBLOX'S TOP 100")
-badge("bTD", at("troll"), 1.6, "TROLL DUELS", "MADE ENTIRELY WITH AI")
+badge("bTD", at("troll"), 1.6, "TROLL DUELS", "MADE ENTIRELY WITH AI", top=680)  # below the arena banner
 ta, td = at("also"), at("did")
 clip("stamp", ta - 0.05, td - ta + 0.05, '<div class="stamp"><div class="s1">THIS VIDEO</div><div class="s2">AI-MADE</div></div>')
 gt.append(f'tl.fromTo("#stamp .stamp",{{scale:2.2,rotation:-14,opacity:0}},{{scale:1,rotation:-7,opacity:1,duration:0.22,ease:"power4.in",immediateRender:false}},{ta - 0.05:.3f}); tl.to("#stamp .stamp",{{opacity:0,duration:0.15}},{td - 0.15:.3f});')
