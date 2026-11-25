@@ -27,7 +27,7 @@ KEY = {"filter", "hide", "build", "sentence", "game", "code", "art", "clickers",
 SKIP = {"july", "2026", "80"}      # chunks shown by a title card instead
 STRIP = {"70000"}         # number shown by a card; the rest of the chunk is still captioned
 # caption height per shot, by chunk start time: keeps captions off faces and held props
-CAPTOP = [(10.6, 11.0, 1440), (11.0, 15.75, 1480), (34.6, 39.8, 1480), (39.8, 42.98, 230), (46.5, 48.0, 1480), (50.7, 51.2, 1480), (58.2, 60.65, 1600)]
+CAPTOP = [(10.6, 11.0, 1440), (11.0, 15.75, 1480), (34.6, 39.8, 1480), (39.8, 42.98, 230), (46.5, 48.0, 1480), (50.7, 51.2, 1480), (58.2, 60.65, 1520)]  # crate shots: text ends above ~1630 px, clear of app UI
 out, tw = [], []
 for k, c in enumerate(chunks):
     if any(norm(w["w"]) in SKIP for w in c): continue

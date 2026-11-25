@@ -98,8 +98,9 @@ k = 0
 while True:
     ts = k / 2.2; k += 1
     if ts >= T["everybody"]: break
-    if ts >= T["camera"] - 0.05: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)
-sfx(whoosh(0.3), T["flipping"] + 0.32, -6);  # after the word "flipping" (it masked it), with the screen roll sfx(whoosh(0.3), T["dropping"] - 0.3)
+    if ts >= T["camera"] + 0.68: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # first shutter after "camera in your phone", so "in" stays clear
+sfx(whoosh(0.3), T["flipping"] + 0.32, -6)  # after the word "flipping" (it masked it), with the screen roll
+sfx(whoosh(0.3), T["dropping"] - 0.3)
 slip = T["dropping"] + 0.55
 d = 0.5; tb = tt(d); sfx(np.sin(2 * np.pi * np.cumsum(260 + 160 * np.sin(2 * np.pi * 9 * tb) * np.exp(-tb / 0.25)) / SR) * env(d, 0.003, 0.2), slip)
 sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25)
