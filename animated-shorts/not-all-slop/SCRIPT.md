@@ -14,7 +14,7 @@ Narrator: free local Kokoro voice (af_heart unless Ben picks another), ~3.7 word
 | 5 | A community member posted a browser **extension to filter out and hide brainrot and AI slop games** from Roblox. | devforum.roblox.com/t/new-extension-to-filter-out-and-hide-brainrot-and-ai-slop-games-from-roblox/4619361 |
 | 6 | Roblox users used AI to copy famous games (Counter-Strike, Superhot, Simpsons Hit & Run, Elden Ring) onto Roblox almost exactly; many were taken down. | Massively OP 2026-10-28, GosuGamers, Herald Corp |
 | 7 | The makers of **PEAK** (Aggro Crab, backed by Landfall) said they'd rather people pirate PEAK than play the Roblox copy CLIFF, a "microtransaction-riddled Roblox slop ripoff" (Aug 2025). | PC Gamer, PCGamesN, Notebookcheck (Aug 4–5, 2025) |
-| 8 | Troll Duels: pick trolls before a match (flip screen, banana, bear trap, bomb), bonk combat, elixir fills from damage, Knockout 2v2/3v3. **Made with AI help — Ben to confirm how.** | Ben (game owner) |
+| 8 | Troll Duels: pick trolls before a match (flip screen, banana, bear trap, bomb), bonk combat, elixir fills from damage, Knockout 2v2/3v3. Made entirely with Claude (AI). Not released yet; coming soon; first-week players get a limited edition OG pet (reveal coming). | Ben (game owner), confirmed 2026-11-25 |
 
 Not used (couldn't confirm twice): which AI-built games hit Roblox's top 20; "30% of new games are slop" (opinion piece).
 
@@ -29,14 +29,18 @@ Not used (couldn't confirm twice): which AI-built games hit Roblox's top 20; "30
 **ESCALATION**
 - Half a million people try it.
 - Roblox's own help page says simple clickers turn out best.
-- Then the copycats show up. People use AI to rebuild Counter-Strike on Roblox, almost exactly.
+- Then the copycats show up. People are using AI to rebuild Counter-Strike on Roblox, almost exactly.
 - The makers of PEAK find a copy of their game and tell fans: pirate ours instead of playing this "Roblox slop ripoff."
 
 **MYSTERY** — So if AI makes slop, why do over 80 percent of Roblox's top 100 games use it too?
 
 **PIVOT** — You see, AI is like the camera in your phone. Everybody has a great one now, and that didn't make everybody a photographer. The slop isn't the AI. It's skipping the part where you make it fun.
 
-**PAYOFF** — I made Troll Duels with AI too. But somebody still had to decide that flipping your friend's screen, dropping a banana, and launching the other team with a bomb is funny. And this video? Also made with AI. Did it feel like slop?
+**PAYOFF** — I made Troll Duels entirely with AI. But somebody still had to decide that flipping your friend's screen, dropping a banana, and launching the other team with a bomb is funny. And this video? Also made with AI. Did it feel like slop?
+
+**CTA (v2, from Ben)** — Troll Duels is coming to Roblox soon, and everyone who plays in the first week gets a limited edition OG pet. I'm revealing it soon, so follow so you don't miss it.
+
+v2 changes (Ben, 2026-11-25): Troll Duels was made entirely with Claude; it is not live yet; launch-week players get a limited edition OG pet, reveal coming soon.
 
 ## Hook score (must be 7+ everywhere)
 

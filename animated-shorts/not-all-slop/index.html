@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #000; }
+      body { font-family: "Archivo Black", sans-serif; }
+      .cap, .ov { position:absolute; inset:0; pointer-events:none; }
+      .cap { z-index:20; } .ov { z-index:21; }
+      .cin { position:absolute; left:140px; width:800px; top:1250px; text-align:center; font-family:"Archivo Black", sans-serif; font-size:74px; line-height:1.05; color:#fff;
+             -webkit-text-stroke:11px #241726; paint-order:stroke fill; filter:drop-shadow(0 6px 0 rgba(36,23,38,0.55)) drop-shadow(0 14px 24px rgba(0,0,0,0.35)); letter-spacing:0.5px; }
+      .cin .w { display:inline-block; margin:0 5px; } .cin .kw { font-size:96px; color:#ffd36a; }
+      .year { position:absolute; left:0; width:1080px; top:290px; text-align:center; font-family:"Archivo Black", sans-serif; color:#fff; -webkit-text-stroke:12px #241726; paint-order:stroke fill; filter:drop-shadow(0 8px 0 rgba(36,23,38,0.5)); }
+      .ymask { overflow:hidden; padding:14px 0 10px; margin:-14px 0 -10px; }
+      .yl { font-size:64px; letter-spacing:22px; padding-left:22px; } .yn { font-size:190px; line-height:1; color:#ffd36a; }
+      .badge { position:absolute; left:170px; width:740px; padding:26px 30px 22px; background:#f6efe0; border:7px solid #241726; border-radius:22px; box-shadow:0 10px 0 rgba(36,23,38,0.55); text-align:center; transform-origin:50% 0; }
+      .badge .pin { position:absolute; left:50%; top:-22px; width:34px; height:34px; margin-left:-17px; border-radius:50%; background:#c62f2a; border:6px solid #241726; }
+      .bn { font-family:"Archivo Black", sans-serif; font-size:66px; color:#241726; line-height:1.05; }
+      .br { margin-top:8px; font-family:"Montserrat", sans-serif; font-weight:800; font-size:30px; letter-spacing:6px; color:#c62f2a; }
+      .num { position:absolute; left:0; width:1080px; top:300px; text-align:center; font-family:"Archivo Black", sans-serif; color:#ffd36a; -webkit-text-stroke:12px #241726; paint-order:stroke fill; filter:drop-shadow(0 8px 0 rgba(36,23,38,0.5)); }
+      .nn { font-size:200px; line-height:1; } .nl { font-size:54px; color:#fff; letter-spacing:4px; }
+      .ticket { position:absolute; left:150px; width:780px; top:310px; padding:22px 0; background:#f6efe0; border:7px dashed #241726; border-radius:18px; text-align:center; font-family:"Archivo Black", sans-serif; font-size:50px; color:#241726; box-shadow:0 10px 0 rgba(36,23,38,0.5); white-space:nowrap; }
+      .ticket .arr { color:#c62f2a; margin:0 18px; }
+      .stamp { position:absolute; left:190px; width:700px; top:330px; padding:18px 0 14px; border:14px solid #e5484d; border-radius:26px; text-align:center; font-family:"Archivo Black", sans-serif; color:#e5484d; background:rgba(255,250,240,0.92); }
+      .stamp .s1 { font-size:44px; letter-spacing:10px; } .stamp .s2 { font-size:104px; line-height:1; }
+      .follow { position:absolute; left:290px; width:500px; top:1520px; padding:26px 0; background:#e5484d; border:8px solid #241726; border-radius:80px; text-align:center; font-family:"Archivo Black", sans-serif; font-size:76px; color:#fff; box-shadow:0 12px 0 rgba(36,23,38,0.6); -webkit-text-stroke:0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="63.2" data-width="1080" data-height="1920">
+      <audio id="a-roll-audio" src="assets/mix.wav" data-start="0" data-duration="63.2" data-track-index="2" data-volume="1"></audio>
+      <div id="world" class="clip" data-start="0" data-duration="63.2" data-track-index="1" data-track-kind="graphics" style="position:absolute;inset:0;">
+        <canvas id="three-layer" width="1080" height="1920" style="width:1080px;height:1920px;display:block;"></canvas>
+      </div>
+      <!-- OVERLAYS -->
+<div id="cap000" class="clip cap" data-start="0.000" data-duration="1.040" data-track-index="5"><div class="cin"><span class="w ">Roblox</span> <span class="w ">players</span> <span class="w ">typed</span></div></div>
+<div id="cap002" class="clip cap" data-start="2.630" data-duration="0.670" data-track-index="5"><div class="cin"><span class="w ">existence,</span></div></div>
+<div id="cap003" class="clip cap" data-start="3.300" data-duration="0.710" data-track-index="5"><div class="cin"><span class="w ">and</span> <span class="w ">someone</span> <span class="w ">built</span></div></div>
+<div id="cap004" class="clip cap" data-start="4.010" data-duration="0.420" data-track-index="5"><div class="cin"><span class="w ">a</span> <span class="w kw">filter</span> <span class="w ">to</span></div></div>
+<div id="cap005" class="clip cap" data-start="4.430" data-duration="0.589" data-track-index="5"><div class="cin"><span class="w kw">hide</span> <span class="w ">them.</span></div></div>
+<div id="cap006" class="clip cap" data-start="5.019" data-duration="0.411" data-track-index="5"><div class="cin"><span class="w ">July,</span></div></div>
+<div id="cap008" class="clip cap" data-start="6.568" data-duration="0.822" data-track-index="5"><div class="cin"><span class="w ">Roblox</span> <span class="w ">adds</span> <span class="w kw">Build</span></div></div>
+<div id="cap009" class="clip cap" data-start="7.390" data-duration="0.630" data-track-index="5"><div class="cin"><span class="w ">to</span> <span class="w ">its</span> <span class="w ">phone</span></div></div>
+<div id="cap010" class="clip cap" data-start="8.020" data-duration="0.330" data-track-index="5"><div class="cin"><span class="w ">app.</span></div></div>
+<div id="cap011" class="clip cap" data-start="8.350" data-duration="0.670" data-track-index="5"><div class="cin"><span class="w ">You</span> <span class="w ">type</span> <span class="w ">one</span></div></div>
+<div id="cap012" class="clip cap" data-start="9.020" data-duration="0.760" data-track-index="5"><div class="cin"><span class="w kw">sentence,</span></div></div>
+<div id="cap013" class="clip cap" data-start="9.780" data-duration="0.350" data-track-index="5"><div class="cin"><span class="w ">and</span> <span class="w ">it</span> <span class="w ">makes</span></div></div>
+<div id="cap014" class="clip cap" data-start="10.130" data-duration="0.530" data-track-index="5"><div class="cin"><span class="w ">you</span> <span class="w ">a</span> <span class="w ">playable</span></div></div>
+<div id="cap015" class="clip cap" data-start="10.660" data-duration="0.346" data-track-index="5"><div class="cin"><span class="w kw">game.</span></div></div>
+<div id="cap016" class="clip cap" data-start="11.006" data-duration="0.624" data-track-index="5"><div class="cin"><span class="w ">No</span> <span class="w kw">code.</span></div></div>
+<div id="cap017" class="clip cap" data-start="11.630" data-duration="0.648" data-track-index="5"><div class="cin"><span class="w ">No</span> <span class="w kw">art.</span></div></div>
+<div id="cap018" class="clip cap" data-start="12.278" data-duration="0.652" data-track-index="5"><div class="cin"><span class="w ">Half</span> <span class="w ">a</span> <span class="w kw">million</span></div></div>
+<div id="cap019" class="clip cap" data-start="12.930" data-duration="0.807" data-track-index="5"><div class="cin"><span class="w ">people</span> <span class="w ">try</span> <span class="w ">it.</span></div></div>
+<div id="cap020" class="clip cap" data-start="13.737" data-duration="1.093" data-track-index="5"><div class="cin"><span class="w ">Roblox's</span> <span class="w ">own</span> <span class="w ">help</span></div></div>
+<div id="cap021" class="clip cap" data-start="14.830" data-duration="0.870" data-track-index="5"><div class="cin"><span class="w ">page</span> <span class="w ">says</span> <span class="w ">simple</span></div></div>
+<div id="cap022" class="clip cap" data-start="15.700" data-duration="0.730" data-track-index="5"><div class="cin"><span class="w kw">clickers</span> <span class="w ">turn</span> <span class="w ">out</span></div></div>
+<div id="cap023" class="clip cap" data-start="16.430" data-duration="0.407" data-track-index="5"><div class="cin"><span class="w ">best.</span></div></div>
+<div id="cap024" class="clip cap" data-start="16.837" data-duration="0.743" data-track-index="5"><div class="cin"><span class="w ">Then</span> <span class="w ">the</span> <span class="w kw">copycats</span></div></div>
+<div id="cap025" class="clip cap" data-start="17.580" data-duration="0.492" data-track-index="5"><div class="cin"><span class="w ">show</span> <span class="w ">up.</span></div></div>
+<div id="cap026" class="clip cap" data-start="18.072" data-duration="1.488" data-track-index="5"><div class="cin"><span class="w ">People</span> <span class="w ">are</span> <span class="w ">using</span></div></div>
+<div id="cap027" class="clip cap" data-start="19.560" data-duration="0.690" data-track-index="5"><div class="cin"><span class="w kw">AI</span> <span class="w ">to</span> <span class="w ">rebuild</span></div></div>
+<div id="cap028" class="clip cap" data-start="20.250" data-duration="0.870" data-track-index="5"><div class="cin"><span class="w kw">Counter-Strike</span> <span class="w ">on</span></div></div>
+<div id="cap029" class="clip cap" data-start="21.120" data-duration="0.460" data-track-index="5"><div class="cin"><span class="w ">Roblox,</span></div></div>
+<div id="cap030" class="clip cap" data-start="21.580" data-duration="0.981" data-track-index="5"><div class="cin"><span class="w ">almost</span> <span class="w kw">exactly.</span></div></div>
+<div id="cap031" class="clip cap" data-start="22.561" data-duration="0.589" data-track-index="5"><div class="cin"><span class="w ">The</span> <span class="w ">makers</span> <span class="w ">of</span></div></div>
+<div id="cap032" class="clip cap" data-start="23.150" data-duration="0.480" data-track-index="5"><div class="cin"><span class="w kw">PEAK</span> <span class="w ">find</span> <span class="w ">a</span></div></div>
+<div id="cap033" class="clip cap" data-start="23.630" data-duration="0.540" data-track-index="5"><div class="cin"><span class="w ">copy</span> <span class="w ">of</span> <span class="w ">their</span></div></div>
+<div id="cap034" class="clip cap" data-start="24.170" data-duration="0.590" data-track-index="5"><div class="cin"><span class="w kw">game</span> <span class="w ">and</span> <span class="w ">tell</span></div></div>
+<div id="cap035" class="clip cap" data-start="24.760" data-duration="0.760" data-track-index="5"><div class="cin"><span class="w ">fans:</span></div></div>
+<div id="cap036" class="clip cap" data-start="25.520" data-duration="1.190" data-track-index="5"><div class="cin"><span class="w kw">pirate</span> <span class="w ">ours</span> <span class="w ">instead</span></div></div>
+<div id="cap037" class="clip cap" data-start="26.710" data-duration="0.640" data-track-index="5"><div class="cin"><span class="w ">of</span> <span class="w ">playing</span> <span class="w ">this</span></div></div>
+<div id="cap038" class="clip cap" data-start="27.350" data-duration="1.140" data-track-index="5"><div class="cin"><span class="w ">Roblox</span> <span class="w kw">slop</span> <span class="w kw">ripoff.</span></div></div>
+<div id="cap039" class="clip cap" data-start="28.490" data-duration="0.710" data-track-index="5"><div class="cin"><span class="w ">So</span> <span class="w ">if</span> <span class="w kw">AI</span></div></div>
+<div id="cap040" class="clip cap" data-start="29.200" data-duration="1.360" data-track-index="5"><div class="cin"><span class="w ">makes</span> <span class="w kw">slop,</span></div></div>
+<div id="cap041" class="clip cap" data-start="30.560" data-duration="0.590" data-track-index="5"><div class="cin"><span class="w ">why</span> <span class="w ">do</span> <span class="w ">over</span></div></div>
+<div id="cap043" class="clip cap" data-start="32.360" data-duration="0.930" data-track-index="5"><div class="cin"><span class="w ">top</span> <span class="w ">100</span> <span class="w ">games</span></div></div>
+<div id="cap044" class="clip cap" data-start="33.290" data-duration="0.671" data-track-index="5"><div class="cin"><span class="w ">use</span> <span class="w ">it</span> <span class="w ">too?</span></div></div>
+<div id="cap045" class="clip cap" data-start="33.961" data-duration="0.329" data-track-index="5"><div class="cin"><span class="w ">You</span> <span class="w ">see,</span></div></div>
+<div id="cap046" class="clip cap" data-start="34.290" data-duration="0.460" data-track-index="5"><div class="cin"><span class="w kw">AI</span> <span class="w ">is</span> <span class="w ">like</span></div></div>
+<div id="cap047" class="clip cap" data-start="34.750" data-duration="0.670" data-track-index="5"><div class="cin"><span class="w ">the</span> <span class="w kw">camera</span> <span class="w ">in</span></div></div>
+<div id="cap048" class="clip cap" data-start="35.420" data-duration="0.694" data-track-index="5"><div class="cin"><span class="w ">your</span> <span class="w ">phone.</span></div></div>
+<div id="cap049" class="clip cap" data-start="36.114" data-duration="0.786" data-track-index="5"><div class="cin"><span class="w ">Everybody</span> <span class="w ">has</span> <span class="w ">a</span></div></div>
+<div id="cap050" class="clip cap" data-start="36.900" data-duration="0.860" data-track-index="5"><div class="cin"><span class="w ">great</span> <span class="w ">one</span> <span class="w ">now,</span></div></div>
+<div id="cap051" class="clip cap" data-start="37.760" data-duration="0.610" data-track-index="5"><div class="cin"><span class="w ">and</span> <span class="w ">that</span> <span class="w ">didn't</span></div></div>
+<div id="cap052" class="clip cap" data-start="38.370" data-duration="0.710" data-track-index="5"><div class="cin"><span class="w ">make</span> <span class="w ">everybody</span> <span class="w ">a</span></div></div>
+<div id="cap053" class="clip cap" data-start="39.080" data-duration="0.685" data-track-index="5"><div class="cin"><span class="w kw">photographer.</span></div></div>
+<div id="cap054" class="clip cap" data-start="39.765" data-duration="0.585" data-track-index="5"><div class="cin"><span class="w ">The</span> <span class="w kw">slop</span> <span class="w ">isn't</span></div></div>
+<div id="cap055" class="clip cap" data-start="40.350" data-duration="0.570" data-track-index="5"><div class="cin"><span class="w ">the</span> <span class="w kw">AI.</span></div></div>
+<div id="cap056" class="clip cap" data-start="40.920" data-duration="0.760" data-track-index="5"><div class="cin"><span class="w ">It's</span> <span class="w ">skipping</span> <span class="w ">the</span></div></div>
+<div id="cap057" class="clip cap" data-start="41.680" data-duration="0.700" data-track-index="5"><div class="cin"><span class="w ">part</span> <span class="w ">where</span> <span class="w ">you</span></div></div>
+<div id="cap058" class="clip cap" data-start="42.380" data-duration="0.599" data-track-index="5"><div class="cin"><span class="w ">make</span> <span class="w ">it</span> <span class="w kw">fun.</span></div></div>
+<div id="cap059" class="clip cap" data-start="42.979" data-duration="0.611" data-track-index="5"><div class="cin"><span class="w ">I</span> <span class="w ">made</span> <span class="w kw">Troll</span></div></div>
+<div id="cap060" class="clip cap" data-start="43.590" data-duration="1.070" data-track-index="5"><div class="cin"><span class="w kw">Duels</span> <span class="w ">entirely</span> <span class="w ">with</span></div></div>
+<div id="cap061" class="clip cap" data-start="44.660" data-duration="0.359" data-track-index="5"><div class="cin"><span class="w kw">AI.</span></div></div>
+<div id="cap062" class="clip cap" data-start="45.019" data-duration="0.751" data-track-index="5"><div class="cin"><span class="w ">But</span> <span class="w ">somebody</span> <span class="w ">still</span></div></div>
+<div id="cap063" class="clip cap" data-start="45.770" data-duration="0.650" data-track-index="5"><div class="cin"><span class="w ">had</span> <span class="w ">to</span> <span class="w ">decide</span></div></div>
+<div id="cap064" class="clip cap" data-start="46.420" data-duration="0.580" data-track-index="5"><div class="cin"><span class="w ">that</span> <span class="w ">flipping</span> <span class="w ">your</span></div></div>
+<div id="cap065" class="clip cap" data-start="47.000" data-duration="0.760" data-track-index="5"><div class="cin"><span class="w ">friend's</span> <span class="w kw">screen,</span></div></div>
+<div id="cap066" class="clip cap" data-start="47.760" data-duration="1.020" data-track-index="5"><div class="cin"><span class="w ">dropping</span> <span class="w ">a</span> <span class="w kw">banana,</span></div></div>
+<div id="cap067" class="clip cap" data-start="48.780" data-duration="0.910" data-track-index="5"><div class="cin"><span class="w ">and</span> <span class="w ">launching</span> <span class="w ">the</span></div></div>
+<div id="cap068" class="clip cap" data-start="49.690" data-duration="0.610" data-track-index="5"><div class="cin"><span class="w ">other</span> <span class="w ">team</span> <span class="w ">with</span></div></div>
+<div id="cap069" class="clip cap" data-start="50.300" data-duration="0.380" data-track-index="5"><div class="cin"><span class="w ">a</span> <span class="w kw">bomb</span> <span class="w ">is</span></div></div>
+<div id="cap070" class="clip cap" data-start="50.680" data-duration="0.499" data-track-index="5"><div class="cin"><span class="w kw">funny.</span></div></div>
+<div id="cap071" class="clip cap" data-start="51.179" data-duration="0.751" data-track-index="5"><div class="cin"><span class="w ">And</span> <span class="w ">this</span> <span class="w kw">video?</span></div></div>
+<div id="cap072" class="clip cap" data-start="51.930" data-duration="0.780" data-track-index="5"><div class="cin"><span class="w ">Also</span> <span class="w ">made</span> <span class="w ">with</span></div></div>
+<div id="cap073" class="clip cap" data-start="52.710" data-duration="0.350" data-track-index="5"><div class="cin"><span class="w kw">AI.</span></div></div>
+<div id="cap074" class="clip cap" data-start="53.060" data-duration="0.570" data-track-index="5"><div class="cin"><span class="w ">Did</span> <span class="w ">it</span> <span class="w ">feel</span></div></div>
+<div id="cap075" class="clip cap" data-start="53.630" data-duration="0.516" data-track-index="5"><div class="cin"><span class="w ">like</span> <span class="w kw">slop?</span></div></div>
+<div id="cap076" class="clip cap" data-start="54.146" data-duration="0.864" data-track-index="5"><div class="cin"><span class="w kw">Troll</span> <span class="w kw">Duels</span> <span class="w ">is</span></div></div>
+<div id="cap077" class="clip cap" data-start="55.010" data-duration="1.000" data-track-index="5"><div class="cin"><span class="w ">coming</span> <span class="w ">to</span> <span class="w ">Roblox</span></div></div>
+<div id="cap078" class="clip cap" data-start="56.010" data-duration="0.350" data-track-index="5"><div class="cin"><span class="w kw">soon,</span></div></div>
+<div id="cap079" class="clip cap" data-start="56.360" data-duration="0.650" data-track-index="5"><div class="cin"><span class="w ">and</span> <span class="w ">everyone</span> <span class="w ">who</span></div></div>
+<div id="cap080" class="clip cap" data-start="57.010" data-duration="0.460" data-track-index="5"><div class="cin"><span class="w ">plays</span> <span class="w ">in</span> <span class="w ">the</span></div></div>
+<div id="cap081" class="clip cap" data-start="57.470" data-duration="0.690" data-track-index="5"><div class="cin"><span class="w ">first</span> <span class="w kw">week</span> <span class="w ">gets</span></div></div>
+<div id="cap082" class="clip cap" data-start="58.160" data-duration="0.920" data-track-index="5"><div class="cin"><span class="w ">a</span> <span class="w ">limited</span> <span class="w ">edition</span></div></div>
+<div id="cap083" class="clip cap" data-start="59.080" data-duration="1.349" data-track-index="5"><div class="cin"><span class="w kw">OG</span> <span class="w kw">pet.</span></div></div>
+<div id="cap084" class="clip cap" data-start="60.429" data-duration="0.741" data-track-index="5"><div class="cin"><span class="w ">I'm</span> <span class="w ">revealing</span> <span class="w ">it</span></div></div>
+<div id="cap085" class="clip cap" data-start="61.170" data-duration="0.350" data-track-index="5"><div class="cin"><span class="w kw">soon,</span></div></div>
+<div id="cap086" class="clip cap" data-start="61.520" data-duration="0.480" data-track-index="5"><div class="cin"><span class="w ">so</span> <span class="w kw">follow</span> <span class="w ">so</span></div></div>
+<div id="cap087" class="clip cap" data-start="62.000" data-duration="0.550" data-track-index="5"><div class="cin"><span class="w ">you</span> <span class="w ">don't</span> <span class="w ">miss</span></div></div>
+<div id="cap088" class="clip cap" data-start="62.550" data-duration="0.650" data-track-index="5"><div class="cin"><span class="w ">it.</span></div></div>
+<div id="n70" class="clip ov" data-start="1.070" data-duration="2.360" data-track-index="6"><div class="num"><div class="nn">70,000</div><div class="nl">NEW GAMES</div></div></div>
+<div id="year" class="clip ov" data-start="5.049" data-duration="1.661" data-track-index="6"><div class="year"><div class="ymask"><div class="yl">JULY</div></div><div class="ymask"><div class="yn">2026</div></div></div></div>
+<div id="bBuild" class="clip ov" data-start="7.110" data-duration="1.500" data-track-index="6"><div class="badge" style="top:300px"><div class="pin"></div><div class="bn">BUILD</div><div class="br">ROBLOX'S AI GAME MAKER</div></div></div>
+<div id="n500" class="clip ov" data-start="12.308" data-duration="1.409" data-track-index="6"><div class="num"><div class="nn">500,000</div><div class="nl">PEOPLE TRIED IT</div></div></div>
+<div id="bPeak" class="clip ov" data-start="23.130" data-duration="1.900" data-track-index="6"><div class="badge" style="top:300px"><div class="pin"></div><div class="bn">PEAK</div><div class="br">INDIE GAME · AGGRO CRAB</div></div></div>
+<div id="n80" class="clip ov" data-start="31.180" data-duration="2.710" data-track-index="6"><div class="num"><div class="nn">80%</div><div class="nl">OF ROBLOX'S TOP 100</div></div></div>
+<div id="bTD" class="clip ov" data-start="43.250" data-duration="1.600" data-track-index="6"><div class="badge" style="top:300px"><div class="pin"></div><div class="bn">TROLL DUELS</div><div class="br">MADE ENTIRELY WITH AI</div></div></div>
+<div id="stamp" class="clip ov" data-start="51.960" data-duration="1.180" data-track-index="6"><div class="stamp"><div class="s1">THIS VIDEO</div><div class="s2">AI-MADE</div></div></div>
+<div id="pet" class="clip ov" data-start="57.400" data-duration="3.170" data-track-index="6"><div class="ticket"><span>FIRST WEEK</span><span class="arr">→</span><span>OG PET</span></div></div>
+<div id="follow" class="clip ov" data-start="61.590" data-duration="1.610" data-track-index="6"><div class="follow">+ FOLLOW</div></div>
+      <!-- /OVERLAYS -->
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true, onUpdate: () => { if (window.__renderAt) window.__renderAt(tl.time()); } });
+      tl.to({ v: 0 }, { v: 1, duration: 63.2, ease: "none" }, 0);
+      // OVTWEENS
+      tl.fromTo("#cap000 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},0.000);
+      tl.fromTo("#cap002 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},2.630);
+      tl.fromTo("#cap003 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},3.300);
+      tl.fromTo("#cap004 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},4.010);
+      tl.fromTo("#cap005 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},4.430);
+      tl.fromTo("#cap006 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},5.019);
+      tl.fromTo("#cap008 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},6.568);
+      tl.fromTo("#cap009 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},7.390);
+      tl.fromTo("#cap010 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},8.020);
+      tl.fromTo("#cap011 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},8.350);
+      tl.fromTo("#cap012 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},9.020);
+      tl.fromTo("#cap013 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},9.780);
+      tl.fromTo("#cap014 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},10.130);
+      tl.fromTo("#cap015 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},10.660);
+      tl.fromTo("#cap016 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},11.006);
+      tl.fromTo("#cap017 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},11.630);
+      tl.fromTo("#cap018 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},12.278);
+      tl.fromTo("#cap019 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},12.930);
+      tl.fromTo("#cap020 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},13.737);
+      tl.fromTo("#cap021 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},14.830);
+      tl.fromTo("#cap022 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},15.700);
+      tl.fromTo("#cap023 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},16.430);
+      tl.fromTo("#cap024 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},16.837);
+      tl.fromTo("#cap025 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},17.580);
+      tl.fromTo("#cap026 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},18.072);
+      tl.fromTo("#cap027 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},19.560);
+      tl.fromTo("#cap028 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},20.250);
+      tl.fromTo("#cap029 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},21.120);
+      tl.fromTo("#cap030 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},21.580);
+      tl.fromTo("#cap031 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},22.561);
+      tl.fromTo("#cap032 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},23.150);
+      tl.fromTo("#cap033 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},23.630);
+      tl.fromTo("#cap034 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},24.170);
+      tl.fromTo("#cap035 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},24.760);
+      tl.fromTo("#cap036 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},25.520);
+      tl.fromTo("#cap037 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},26.710);
+      tl.fromTo("#cap038 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},27.350);
+      tl.fromTo("#cap039 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},28.490);
+      tl.fromTo("#cap040 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},29.200);
+      tl.fromTo("#cap041 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},30.560);
+      tl.fromTo("#cap043 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},32.360);
+      tl.fromTo("#cap044 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},33.290);
+      tl.fromTo("#cap045 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},33.961);
+      tl.fromTo("#cap046 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},34.290);
+      tl.fromTo("#cap047 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},34.750);
+      tl.fromTo("#cap048 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},35.420);
+      tl.fromTo("#cap049 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},36.114);
+      tl.fromTo("#cap050 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},36.900);
+      tl.fromTo("#cap051 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},37.760);
+      tl.fromTo("#cap052 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},38.370);
+      tl.fromTo("#cap053 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},39.080);
+      tl.fromTo("#cap054 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},39.765);
+      tl.fromTo("#cap055 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},40.350);
+      tl.fromTo("#cap056 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},40.920);
+      tl.fromTo("#cap057 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},41.680);
+      tl.fromTo("#cap058 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},42.380);
+      tl.fromTo("#cap059 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},42.979);
+      tl.fromTo("#cap060 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},43.590);
+      tl.fromTo("#cap061 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},44.660);
+      tl.fromTo("#cap062 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},45.019);
+      tl.fromTo("#cap063 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},45.770);
+      tl.fromTo("#cap064 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},46.420);
+      tl.fromTo("#cap065 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},47.000);
+      tl.fromTo("#cap066 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},47.760);
+      tl.fromTo("#cap067 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},48.780);
+      tl.fromTo("#cap068 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},49.690);
+      tl.fromTo("#cap069 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},50.300);
+      tl.fromTo("#cap070 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},50.680);
+      tl.fromTo("#cap071 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},51.179);
+      tl.fromTo("#cap072 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},51.930);
+      tl.fromTo("#cap073 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},52.710);
+      tl.fromTo("#cap074 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},53.060);
+      tl.fromTo("#cap075 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},53.630);
+      tl.fromTo("#cap076 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},54.146);
+      tl.fromTo("#cap077 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},55.010);
+      tl.fromTo("#cap078 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},56.010);
+      tl.fromTo("#cap079 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},56.360);
+      tl.fromTo("#cap080 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},57.010);
+      tl.fromTo("#cap081 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},57.470);
+      tl.fromTo("#cap082 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},58.160);
+      tl.fromTo("#cap083 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},59.080);
+      tl.fromTo("#cap084 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},60.429);
+      tl.fromTo("#cap085 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},61.170);
+      tl.fromTo("#cap086 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},61.520);
+      tl.fromTo("#cap087 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},62.000);
+      tl.fromTo("#cap088 .cin",{y:22,opacity:0},{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false},62.550);
+      tl.fromTo("#n70 .num",{scale:0.4,opacity:0},{scale:1,opacity:1,duration:0.35,ease:"back.out(2.6)",immediateRender:false},1.070); tl.to("#n70 .num",{opacity:0,y:-20,duration:0.2},3.210);
+      tl.fromTo("#year .yl",{yPercent:150},{yPercent:0,duration:0.45,ease:"expo.out",immediateRender:false},5.049); tl.fromTo("#year .yn",{yPercent:150},{yPercent:0,duration:0.5,ease:"expo.out",immediateRender:false},5.219); tl.to("#year .year",{y:-30,opacity:0,duration:0.25,ease:"power2.in"},6.460);
+      tl.fromTo("#bBuild .badge",{scale:0.55,rotation:-9,opacity:0},{scale:1,rotation:-3,opacity:1,duration:0.42,ease:"back.out(2.2)",immediateRender:false},7.110); tl.to("#bBuild .badge",{y:-24,opacity:0,duration:0.22,ease:"power2.in"},8.370);
+      tl.fromTo("#n500 .num",{scale:0.4,opacity:0},{scale:1,opacity:1,duration:0.35,ease:"back.out(2.6)",immediateRender:false},12.308); tl.to("#n500 .num",{opacity:0,y:-20,duration:0.2},13.497);
+      tl.fromTo("#bPeak .badge",{scale:0.55,rotation:-9,opacity:0},{scale:1,rotation:-3,opacity:1,duration:0.42,ease:"back.out(2.2)",immediateRender:false},23.130); tl.to("#bPeak .badge",{y:-24,opacity:0,duration:0.22,ease:"power2.in"},24.790);
+      tl.fromTo("#n80 .num",{scale:0.4,opacity:0},{scale:1,opacity:1,duration:0.35,ease:"back.out(2.6)",immediateRender:false},31.180); tl.to("#n80 .num",{opacity:0,y:-20,duration:0.2},33.670);
+      tl.fromTo("#bTD .badge",{scale:0.55,rotation:-9,opacity:0},{scale:1,rotation:-3,opacity:1,duration:0.42,ease:"back.out(2.2)",immediateRender:false},43.250); tl.to("#bTD .badge",{y:-24,opacity:0,duration:0.22,ease:"power2.in"},44.610);
+      tl.fromTo("#stamp .stamp",{scale:2.2,rotation:-14,opacity:0},{scale:1,rotation:-7,opacity:1,duration:0.22,ease:"power4.in",immediateRender:false},51.960); tl.to("#stamp .stamp",{opacity:0,duration:0.15},52.990);
+      tl.fromTo("#pet .ticket",{x:-120,opacity:0,rotation:-6},{x:0,opacity:1,rotation:-3,duration:0.45,ease:"expo.out",immediateRender:false},57.400); tl.to("#pet .ticket",{x:120,opacity:0,duration:0.25,ease:"power2.in"},60.370);
+      tl.fromTo("#follow .follow",{scale:0.3,opacity:0},{scale:1,opacity:1,duration:0.35,ease:"back.out(3)",immediateRender:false},61.590); tl.to("#follow .follow",{scale:1.08,duration:0.18,yoyo:true,repeat:3,ease:"sine.inOut"},62.090);
+      // /OVTWEENS
+      window.__timelines["main"] = tl;
+    </script>
+    <script type="module" src="assets/scene.js"></script>
+  </body>
+</html>

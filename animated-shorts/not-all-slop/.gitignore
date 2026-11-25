@@ -1,0 +1,4 @@
+assets/*.wav
+renders/
+.hyperframes/
+node_modules/
