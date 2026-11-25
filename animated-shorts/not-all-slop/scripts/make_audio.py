@@ -93,12 +93,12 @@ sfx(bell(1318.5) + 0.6 * bell(1975.5), T["p80"])
 for i in range(3):
     for k in range(200):
         ts = (k - i * 0.37) / 1.7
-        if T["everybody"] <= ts < T["slop3"]: sfx(click * 1.4, ts); sfx(click, ts + 0.05)
+        if T["everybody"] <= ts < T["slop3"]: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # crowd shutters, kept well under the voice
 k = 0
 while True:
     ts = k / 2.2; k += 1
     if ts >= T["everybody"]: break
-    if ts >= T["camera"] - 0.05: sfx(click * 1.4, ts); sfx(click, ts + 0.05)
+    if ts >= T["camera"] - 0.05: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)
 sfx(whoosh(0.3), T["flipping"] + 0.32, -6);  # after the word "flipping" (it masked it), with the screen roll sfx(whoosh(0.3), T["dropping"] - 0.3)
 slip = T["dropping"] + 0.55
 d = 0.5; tb = tt(d); sfx(np.sin(2 * np.pi * np.cumsum(260 + 160 * np.sin(2 * np.pi * 9 * tb) * np.exp(-tb / 0.25)) / SR) * env(d, 0.003, 0.2), slip)

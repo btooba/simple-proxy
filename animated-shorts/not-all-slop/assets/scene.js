@@ -648,6 +648,9 @@ key(T.funny + 0.4, a(0.8, 4.0, 14.5), a(1.0, 5.0, -1.0), 46, 0);
 key(T.also + 0.6, a(7, 6, 28), a(0, -2, 0), 44, 0);
 key(T.troll2 - 0.1, a(10, 8, 36), a(0, -4, 0), 44, 0);
 // coming soon, OG pet, follow
+key(T.coming - 0.02, a(11, 8.6, 39), a(0, -4, 0), 44, 0);
+// cut in on "coming" (a pan from the wide shot cropped the banner mid-word)
+key(T.coming, a(3.1, 2.25, 9.2), a(3.0, 1.7, 0.8), 42, 0, true);
 key(T.coming + 0.4, a(3.0, 2.2, 8.6), a(3.0, 1.7, 0.8), 42, 0);
 key(T.limited - 0.15, a(2.8, 2.0, 8.2), a(2.8, 1.5, 1.2), 40, 0);
 key(T.og, a(2.1, 1.5, 6.6), a(1.95, 0.8, 2.3), 38, 0);
@@ -777,7 +780,8 @@ function propsAt(t) {
   const typed = Math.round(14 * clamp((t - T.type) / (T.sentence + 0.5 - T.type)));
   drawPhone(t < T.type ? 0 : typed, t > T.game - 0.05 ? 2 : (t > T.sentence + 0.55 ? 1 : 0), t > T.type - 0.4 && t < T.game && (Math.floor(t * 4) % 2 === 0));
   // arena signs
-  soonSign.visible = t > T.troll2 - 0.2 && t < T.first + 0.2; soonSign.position.set(A.x + 3.2, A.y - 2.2 * (1 - ease(T.coming - 0.4, T.coming + 0.1, t)) - 2.4 * ease(T.first - 0.25, T.first + 0.15, t), A.z + 0.8);  // sinks as the FIRST WEEK ticket arrives soonSign.rotation.y = -0.25;
+  { const sc = Math.max(0.001, 1 - ease(T.first - 0.4, T.first - 0.12, t));  // shrinks away about its own centre as the FIRST WEEK ticket arrives
+    soonSign.visible = t > T.troll2 - 0.2 && t < T.first - 0.12; soonSign.position.set(A.x + 3.2, A.y - 2.2 * (1 - ease(T.coming - 0.4, T.coming + 0.1, t)) + 2.0 * (1 - sc), A.z + 0.8); soonSign.scale.setScalar(sc); } soonSign.rotation.y = -0.25;
   crate.visible = t > T.limited - 0.4; { const u = ease(T.limited - 0.4, T.limited - 0.1, t); crate.position.set(A.x + 1.95, A.y + (1 - u) * 4, A.z + 2.3); const wob = t > T.revealing ? 0.12 : 0.05; crate.rotation.set(0, -0.35, Math.sin(t * 18) * wob * (Math.sin(t * 3) > 0.2 ? 1 : 0.2)); }
 }
 

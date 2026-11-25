@@ -24,10 +24,10 @@ for i, w in enumerate(W):
 KEY = {"filter", "hide", "build", "sentence", "game", "code", "art", "clickers", "copycats", "counterstrike", "exactly",
        "peak", "pirate", "slop", "ripoff", "camera", "photographer", "fun", "troll", "duels", "screen", "banana", "bomb",
        "funny", "video", "ai", "soon", "week", "og", "pet", "follow", "million"}
-SKIP = {"2026", "80"}      # chunks shown by a title card instead
+SKIP = {"july", "2026", "80"}      # chunks shown by a title card instead
 STRIP = {"70000"}         # number shown by a card; the rest of the chunk is still captioned
 # caption height per shot, by chunk start time: keeps captions off faces and held props
-CAPTOP = [(10.9, 12.3, 1560), (34.9, 39.8, 1540), (39.8, 42.98, 230), (58.2, 60.65, 1700)]
+CAPTOP = [(10.6, 11.0, 1440), (11.0, 15.75, 1480), (34.6, 39.8, 1480), (39.8, 42.98, 230), (46.5, 48.0, 1480), (50.7, 51.2, 1480), (58.2, 60.65, 1600)]
 out, tw = [], []
 for k, c in enumerate(chunks):
     if any(norm(w["w"]) in SKIP for w in c): continue
@@ -60,9 +60,9 @@ def badge(id_, t0, dur, name, role, top=300):
 
 num("n70", at("70000"), at("filter") - 0.7, "70,000", "", top=190)  # higher, clear of the TOP 100 board header
 tj, tb = at("july"), at("build")
-clip("year", tj - 0.05, tb - tj - 0.45, '<div class="year"><div class="ymask"><div class="yl">JULY</div></div><div class="ymask"><div class="yn">2026</div></div></div>')
-gt.append(f'tl.fromTo("#year .yl",{{yPercent:150}},{{yPercent:0,duration:0.45,ease:"expo.out",immediateRender:false}},{tj - 0.05:.3f}); tl.fromTo("#year .yn",{{yPercent:150}},{{yPercent:0,duration:0.5,ease:"expo.out",immediateRender:false}},{tj + 0.12:.3f}); tl.to("#year .year",{{y:-30,opacity:0,duration:0.25,ease:"power2.in"}},{tb - 0.75:.3f});')
-badge("bBuild", tb, 1.2, "BUILD", "ROBLOX'S AI GAME MAKER")
+clip("year", tj - 0.05, tb - tj - 0.45, '<div class="year" style="top:1060px"><div class="ymask"><div class="yl">JULY</div></div><div class="ymask"><div class="yn">2026</div></div></div>')
+gt.append(f'tl.fromTo("#year .yl",{{yPercent:150}},{{yPercent:0,duration:0.45,ease:"expo.out",immediateRender:false}},{tj - 0.05:.3f}); tl.fromTo("#year .yn",{{yPercent:150}},{{yPercent:0,duration:0.5,ease:"expo.out",immediateRender:false}},{tj + 0.12:.3f}); tl.to("#year .year",{{y:-30,opacity:0,duration:0.25,ease:"power2.in"}},{tb - 0.95:.3f});')
+badge("bBuild", tb, 1.0, "BUILD", "ROBLOX'S AI GAME MAKER", top=110)  # high and short: clear of the phone's own BUILD header
 num("n500", at("half"), at("robloxs") - 0.1, "500,000", "PEOPLE TRIED IT")
 badge("bPeak", at("peak"), 1.9, "PEAK", "INDIE GAME · AGGRO CRAB")
 num("n80", at("80"), at("see") - 0.35, "80%", "OF ROBLOX'S TOP 100")
