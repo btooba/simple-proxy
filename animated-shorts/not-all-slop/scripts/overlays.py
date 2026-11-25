@@ -38,14 +38,15 @@ for k, c in enumerate(chunks):
 # ---- title cards
 g, gt = [], []
 def clip(id_, s0, dur, inner): g.append(f'<div id="{id_}" class="clip ov" data-start="{s0:.3f}" data-duration="{dur:.3f}" data-track-index="6">{inner}</div>')
-def num(id_, t0, t1, big, label):
-    clip(id_, t0 - 0.05, t1 - t0 + 0.05, f'<div class="num"><div class="nn">{big}</div><div class="nl">{label}</div></div>')
+def num(id_, t0, t1, big, label, top=None):
+    st = f' style="top:{top}px"' if top else ""
+    clip(id_, t0 - 0.05, t1 - t0 + 0.05, f'<div class="num"{st}><div class="nn">{big}</div><div class="nl">{label}</div></div>')
     gt.append(f'tl.fromTo("#{id_} .num",{{scale:0.4,opacity:0}},{{scale:1,opacity:1,duration:0.35,ease:"back.out(2.6)",immediateRender:false}},{t0 - 0.05:.3f}); tl.to("#{id_} .num",{{opacity:0,y:-20,duration:0.2}},{t1 - 0.22:.3f});')
 def badge(id_, t0, dur, name, role, top=300):
     clip(id_, t0 - 0.1, dur, f'<div class="badge" style="top:{top}px"><div class="pin"></div><div class="bn">{name}</div><div class="br">{role}</div></div>')
     gt.append(f'tl.fromTo("#{id_} .badge",{{scale:0.55,rotation:-9,opacity:0}},{{scale:1,rotation:-3,opacity:1,duration:0.42,ease:"back.out(2.2)",immediateRender:false}},{t0 - 0.1:.3f}); tl.to("#{id_} .badge",{{y:-24,opacity:0,duration:0.22,ease:"power2.in"}},{t0 - 0.1 + dur - 0.24:.3f});')
 
-num("n70", at("70000"), at("filter") - 0.7, "70,000", "NEW GAMES")
+num("n70", at("70000"), at("filter") - 0.7, "70,000", "NEW GAMES", top=190)  # higher, clear of the TOP 100 board header
 tj, tb = at("july"), at("build")
 clip("year", tj - 0.05, tb - tj - 0.45, '<div class="year"><div class="ymask"><div class="yl">JULY</div></div><div class="ymask"><div class="yn">2026</div></div></div>')
 gt.append(f'tl.fromTo("#year .yl",{{yPercent:150}},{{yPercent:0,duration:0.45,ease:"expo.out",immediateRender:false}},{tj - 0.05:.3f}); tl.fromTo("#year .yn",{{yPercent:150}},{{yPercent:0,duration:0.5,ease:"expo.out",immediateRender:false}},{tj + 0.12:.3f}); tl.to("#year .year",{{y:-30,opacity:0,duration:0.25,ease:"power2.in"}},{tb - 0.75:.3f});')

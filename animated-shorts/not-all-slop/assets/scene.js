@@ -380,7 +380,7 @@ function drawPerson(c, sp, st) {
   if (P === 'type') { x.fillStyle = '#2b2d42'; x.strokeStyle = PLUM; x.lineWidth = 6; x.beginPath(); x.roundRect(cx - 44, tY + 70, 88, 130, 14); x.fill(); x.stroke(); x.fillStyle = '#8fe3ff'; x.fillRect(cx - 34, tY + 82, 68, 100); dot(x, hl[0], hl[1], 13); dot(x, hr[0], hr[1], 13); }
   if (P === 'phoneUp') { x.save(); x.translate(hr[0], hr[1] - 40); x.rotate(0.15); x.fillStyle = '#2b2d42'; x.strokeStyle = PLUM; x.lineWidth = 6; x.beginPath(); x.roundRect(-42, -66, 84, 132, 14); x.fill(); x.stroke(); dot(x, -18, -40, 9, '#7a8aa8'); x.restore(); dot(x, hr[0], hr[1], 13); }
   if ((P === 'hold' || P === 'give') && st.art) { const img = COV[st.art]; const bx = P === 'give' ? hr[0] - 20 : cx - 85, by = P === 'give' ? hr[1] - 190 : tY + 10; x.drawImage(img, bx, by, 170, 212); x.strokeStyle = PLUM; x.lineWidth = 7; x.strokeRect(bx, by, 170, 212); if (P === 'hold') { dot(x, hl[0] + 6, hl[1], 13); dot(x, hr[0] - 6, hr[1], 13); } }
-  if (P === 'sign') { x.fillStyle = '#fffaf0'; x.strokeStyle = PLUM; x.lineWidth = 8; x.beginPath(); x.roundRect(cx - 170, tY + 10, 340, 210, 14); x.fill(); x.stroke(); const L = (st.sign || '').split('\n'); L.forEach((s, i) => txt(x, s, cx, tY + 70 + i * 74 - (L.length - 2) * 30, 52, i === L.length - 1 ? '#e5484d' : '#2b2d42', PLUM, 0)); dot(x, hl[0] + 6, hl[1], 13); dot(x, hr[0] - 6, hr[1], 13); }
+  if (P === 'sign') { x.fillStyle = '#fffaf0'; x.strokeStyle = PLUM; x.lineWidth = 8; x.beginPath(); x.roundRect(cx - 170, tY + 10, 340, 210, 14); x.fill(); x.stroke(); const L = (st.sign || '').split('\n'); x.font = `900 52px ${FONT}`; const fs = Math.min(52, ...L.map(s => Math.floor(52 * 296 / x.measureText(s).width))); L.forEach((s, i) => txt(x, s, cx, tY + 70 + i * 74 - (L.length - 2) * 30, fs, i === L.length - 1 ? '#e5484d' : '#2b2d42', PLUM, 0)); dot(x, hl[0] + 6, hl[1], 13); dot(x, hr[0] - 6, hr[1], 13); }
   // head
   const rw = 118, rh = 124, hcx = cx + (st.tilt || 0) * 10, hcy = hy;
   if (sp.cat) { x.fillStyle = sp.skin; x.strokeStyle = PLUM; x.lineWidth = 9; for (const s of [-1, 1]) { x.beginPath(); x.moveTo(hcx + s * 30, hcy - rh + 14); x.lineTo(hcx + s * 108, hcy - rh - 70); x.lineTo(hcx + s * 112, hcy - rh + 60); x.closePath(); x.fill(); x.stroke(); x.fillStyle = '#ffb3c6'; x.beginPath(); x.moveTo(hcx + s * 56, hcy - rh + 20); x.lineTo(hcx + s * 100, hcy - rh - 40); x.lineTo(hcx + s * 100, hcy - rh + 40); x.closePath(); x.fill(); x.fillStyle = sp.skin; } }
@@ -592,8 +592,8 @@ function key(t, p, l, fov = 40, roll = 0, cut = false) { K.push({ t, p: V(...p),
 const a = (dx, dy, dz) => [A.x + dx, A.y + dy, A.z + dz];
 const CUT1 = T.july - 0.05, CUT2 = T.made - 0.1;
 // hook: kid in front of the slop mountain, then the filter
-key(0, [1.6, 1.5, -12.6], [0.2, 4.4, -30], 52, 0.02, true);
-key(T.filter - 0.9, [2.2, 1.75, -13.6], [0.6, 4.8, -30], 49, 0.04);
+key(0, [1.6, 1.5, -12.6], [0.2, 5.9, -30], 52, 0.02, true);  // tilted up so the kid's face sits under the caption
+key(T.filter - 0.9, [2.2, 1.75, -13.6], [0.6, 5.9, -30], 49, 0.04);
 key(T.filter + 0.05, [2.6, 4.0, -8.0], [9.4, 3.7, -27], 46, -0.03);
 key(CUT1, [2.8, 4.1, -8.8], [9.4, 3.6, -27], 44, -0.03);
 // July 2026: town wide, glide to the phone
