@@ -1,5 +1,5 @@
 """Music + sound effects synthesized in code (no licences, no paid tools), mixed under the voice.
-Music sits ~10 LU under the voice, each effect ~12 dB under the voice's loudest moments, mix at -14 LUFS.
+Music sits 12 LU under the voice, each effect ~12 dB under the voice's loudest moments, mix at -14 LUFS.
 Usage: python make_audio.py  -> assets/mix.wav (48 kHz stereo) + prints levels."""
 import json, pathlib, subprocess
 import numpy as np, soundfile as sf, pyloudnorm as pyln
@@ -71,7 +71,7 @@ for b in range(nb):
         else: put(music, clap * 0.45, t0)
     if arena and b % 2 == 0: put(music, bell(tri[(b // 2) % 3] * 2) * 0.12, t0 + beat * 0.25)
 fade = np.ones(N); fl = int(0.35 * SR); fade[-fl:] = np.linspace(1, 0, fl); music *= fade
-music *= 10 ** ((-26 - meter.integrated_loudness(music)) / 20)
+music *= 10 ** ((-28 - meter.integrated_loudness(music)) / 20)  # 12 LU under the voice (Ben's rule)
 
 # ---------- sound effects ----------
 FX = []  # (signal, time)
@@ -79,7 +79,7 @@ def sfx(x, t0): FX.append((x, t0))
 def chirp(f0, f1, d): t = tt(d); return np.sin(2 * np.pi * np.cumsum(np.linspace(f0, f1, len(t))) / SR)
 pop = chirp(500, 1300, 0.09) * env(0.09, 0.002, 0.03)
 whoosh = lambda d=0.4: lowpass(noise(d), 0.12) * np.sin(np.pi * tt(d) / d) ** 2
-click = hp(noise(0.012)) * env(0.012, 0.0005, 0.003)
+click = lowpass(hp(noise(0.012)), 0.45) * env(0.012, 0.0005, 0.003)  # softened: raw high-passed noise rings after AAC encoding
 thud = (np.sin(2 * np.pi * 85 * tt(0.25)) * env(0.25, 0.002, 0.07) + 0.5 * lowpass(noise(0.25), 0.3) * env(0.25, 0.001, 0.02))
 def chime():
     out = np.zeros(int(0.9 * SR))
@@ -110,16 +110,32 @@ sfx(chime(), T["fun"] - 0.05); sfx(chime(), T["limited"] - 0.1); sfx(thud * 0.8,
 for i in range(3): sfx(thud * 0.6, T["revealing"] + i * 0.16)
 sfx(whoosh(0.35), T["coming"] - 0.35); sfx(pop, T["follow"] - 0.05)
 sfx_bus = np.zeros(N)
+v_pk = np.max(np.abs(voice))
 target = v_mom - 12
 for x, t0 in FX:
     seg = np.pad(x, (0, max(0, int(0.4 * SR) - len(x))))
     try: l = pyln.Meter(SR, block_size=0.4).integrated_loudness(seg)
     except Exception: l = -70
     g = 10 ** ((target - l) / 20) if l > -70 else 0
+    g = min(g, 0.5 * v_pk / max(np.max(np.abs(x)), 1e-9))  # short clicks read quiet over 0.4 s; cap their peak at half the voice's
     put(sfx_bus, x * g, t0)
 
 mix = voice + music + sfx_bus
 mix *= 10 ** ((-17.5 - meter.integrated_loudness(mix)) / 20)
 lim = 10 ** (-1.5 / 20); mix = np.where(np.abs(mix) > lim * 0.8, np.sign(mix) * (lim * 0.8 + (lim * 0.2) * np.tanh((np.abs(mix) - lim * 0.8) / (lim * 0.2))), mix)
-sf.write(P / "assets" / "mix.wav", np.stack([mix, mix], 1), SR, subtype="PCM_16")
+sf.write(P / "assets" / "mix_pre.wav", np.stack([mix, mix], 1), SR, subtype="PCM_16")
+
+# two-pass loudnorm to -14 LUFS; true-peak target -3 dBTP so the AAC encode stays at or under -1 dBTP
+pre, out = str(P / "assets" / "mix_pre.wav"), str(P / "assets" / "mix.wav")
+r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", pre, "-af", "lowpass=f=16000,loudnorm=I=-14:TP=-3:LRA=11:print_format=json", "-f", "null", "-"], capture_output=True, text=True).stderr
+m = json.loads(r[r.rindex("{"):r.rindex("}") + 1])
+ln = f"lowpass=f=16000,loudnorm=I=-14:TP=-3:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true"
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", pre, "-af", ln, "-ar", str(SR), "-c:a", "pcm_s16le", out], check=True)
+def tp(f):
+    e = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", f, "-af", "ebur128=peak=true", "-f", "null", "-"], capture_output=True, text=True).stderr
+    e = e[e.rindex("Summary"):]; g = lambda k: e.split(k)[1].split()[0]
+    return f"{g('I:')} LUFS, true peak {g('Peak:')} dBTP"
+(P / "renders").mkdir(exist_ok=True); aac = str(P / "renders" / "mix_test.m4a")
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", out, "-c:a", "aac", "-b:a", "192k", aac], check=True)
+print(f"mix.wav: {tp(out)} | after AAC encode: {tp(aac)}")
 print(f"voice momentary max {v_mom:.1f} LUFS(rel) | music {meter.integrated_loudness(music):.1f} vs voice {meter.integrated_loudness(voice):.1f} | mix {meter.integrated_loudness(mix):.1f} LUFS | {len(FX)} sfx")

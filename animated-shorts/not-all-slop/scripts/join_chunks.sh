@@ -8,5 +8,5 @@ for f in $(sed "s/file '\(.*\)'/\1/" renders/chunks/list.txt); do
   echo "$f $(ffprobe -v error -count_frames -select_streams v -show_entries stream=nb_read_frames -of csv=p=0 renders/chunks/$f) frames"
 done
 ffmpeg -v error -y -f concat -safe 0 -i renders/chunks/list.txt -i assets/mix.wav -map 0:v -map 1:a \
-  -c:v copy -c:a aac -b:a 192k -ar 48000 -shortest -movflags +faststart renders/not-all-slop.mp4
+  -c:v copy -c:a aac -b:a 192k -ar 48000 -movflags +faststart renders/not-all-slop.mp4
 echo "joined: $(ffprobe -v error -count_frames -select_streams v -show_entries stream=nb_read_frames -of csv=p=0 renders/not-all-slop.mp4) frames (want 1896)"
