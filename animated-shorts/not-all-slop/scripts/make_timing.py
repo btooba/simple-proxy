@@ -19,7 +19,7 @@ CUES = dict(
     ripoff=("ripoff",), so=("so",), why=("why",), p80=("80",), see=("see",), camera=("camera",),
     everybody=("everybody",), photographer=("photographer",), slop3=("slop", 3), skipping=("skipping",), fun=("fun",),
     made=("made",), troll1=("troll",), but=("but",), flipping=("flipping",), screen=("screen",), dropping=("dropping",),
-    banana=("banana",), launching=("launching",), bomb=("bomb",), funny=("funny",), video=("video",), also=("also",),
+    banana=("banana",), launching=("launching",), other=("other",), bomb=("bomb",), funny=("funny",), video=("video",), also=("also",),
     did=("did",), slop4=("slop", 4), troll2=("troll", 2), coming=("coming",), first=("first",), limited=("limited",),
     og=("og",), pet=("pet",), revealing=("revealing",), follow=("follow",), miss=("miss",),
 )

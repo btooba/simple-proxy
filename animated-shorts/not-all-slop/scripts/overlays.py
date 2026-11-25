@@ -19,20 +19,32 @@ for i, w in enumerate(W):
     cur.append(w); text = " ".join(x["w"] for x in cur); nxt = W[i + 1] if i + 1 < len(W) else None
     brk = w["w"][-1] in ".,?!:" or len(cur) >= 3 or len(text) >= 16 or (nxt and nxt["s"] - w["e"] > 0.35)
     if nxt and len(text + " " + nxt["w"]) > 20: brk = True
+    if nxt and norm(w["w"]) == "troll" and norm(nxt["w"]).startswith("duels"): brk = False  # keep the game's name on one caption
     if brk or not nxt: chunks.append(cur); cur = []
 KEY = {"filter", "hide", "build", "sentence", "game", "code", "art", "clickers", "copycats", "counterstrike", "exactly",
        "peak", "pirate", "slop", "ripoff", "camera", "photographer", "fun", "troll", "duels", "screen", "banana", "bomb",
        "funny", "video", "ai", "soon", "week", "og", "pet", "follow", "million"}
-SKIP = {"70000", "2026", "80"}
+SKIP = {"2026", "80"}      # chunks shown by a title card instead
+STRIP = {"70000"}         # number shown by a card; the rest of the chunk is still captioned
+# caption height per shot, by chunk start time: keeps captions off faces and held props
+CAPTOP = [(10.9, 12.3, 1560), (34.9, 39.8, 1540), (39.8, 42.98, 230), (58.2, 60.65, 1700)]
 out, tw = [], []
 for k, c in enumerate(chunks):
     if any(norm(w["w"]) in SKIP for w in c): continue
+    c = [w for w in c if norm(w["w"]) not in STRIP]
+    if not c: continue
     s0 = max(0, c[0]["s"] - 0.08); e0 = chunks[k + 1][0]["s"] - 0.08 if k + 1 < len(chunks) else min(D, c[-1]["e"] + 0.3)
     e0 = min(e0, c[-1]["e"] + 0.3)
     if e0 - s0 < 0.12: e0 = s0 + 0.12
-    words = [f'<span class="w {"kw" if norm(w["w"]) in KEY else ""}">{w["w"]}</span>' for w in c]
+    words, i = [], 0
+    while i < len(c):  # "Troll Duels" is one unbreakable span so the name never wraps across lines
+        w = c[i]
+        if i + 1 < len(c) and norm(w["w"]) == "troll" and norm(c[i + 1]["w"]).startswith("duels"):
+            words.append(f'<span class="w kw">{w["w"]}&nbsp;{c[i + 1]["w"]}</span>'); i += 2; continue
+        words.append(f'<span class="w {"kw" if norm(w["w"]) in KEY else ""}">{w["w"]}</span>'); i += 1
     cid = f"cap{k:03d}"
-    out.append(f'<div id="{cid}" class="clip cap" data-start="{s0:.3f}" data-duration="{e0 - s0:.3f}" data-track-index="5"><div class="cin">{" ".join(words)}</div></div>')
+    top = next((y for a, b, y in CAPTOP if a <= c[0]["s"] < b), None); sty = f' style="top:{top}px"' if top else ""
+    out.append(f'<div id="{cid}" class="clip cap" data-start="{s0:.3f}" data-duration="{e0 - s0:.3f}" data-track-index="5"><div class="cin"{sty}>{" ".join(words)}</div></div>')
     tw.append(f'tl.fromTo("#{cid} .cin",{{y:22,opacity:0}},{{y:0,opacity:1,duration:0.13,ease:"power2.out",immediateRender:false}},{s0:.3f});')
 
 # ---- title cards
@@ -40,23 +52,23 @@ g, gt = [], []
 def clip(id_, s0, dur, inner): g.append(f'<div id="{id_}" class="clip ov" data-start="{s0:.3f}" data-duration="{dur:.3f}" data-track-index="6">{inner}</div>')
 def num(id_, t0, t1, big, label, top=None):
     st = f' style="top:{top}px"' if top else ""
-    clip(id_, t0 - 0.05, t1 - t0 + 0.05, f'<div class="num"{st}><div class="nn">{big}</div><div class="nl">{label}</div></div>')
+    clip(id_, t0 - 0.05, t1 - t0 + 0.05, f'<div class="num"{st}><div class="nn">{big}</div>{f'<div class="nl">{label}</div>' if label else ""}</div>')
     gt.append(f'tl.fromTo("#{id_} .num",{{scale:0.4,opacity:0}},{{scale:1,opacity:1,duration:0.35,ease:"back.out(2.6)",immediateRender:false}},{t0 - 0.05:.3f}); tl.to("#{id_} .num",{{opacity:0,y:-20,duration:0.2}},{t1 - 0.22:.3f});')
 def badge(id_, t0, dur, name, role, top=300):
     clip(id_, t0 - 0.1, dur, f'<div class="badge" style="top:{top}px"><div class="pin"></div><div class="bn">{name}</div><div class="br">{role}</div></div>')
     gt.append(f'tl.fromTo("#{id_} .badge",{{scale:0.55,rotation:-9,opacity:0}},{{scale:1,rotation:-3,opacity:1,duration:0.42,ease:"back.out(2.2)",immediateRender:false}},{t0 - 0.1:.3f}); tl.to("#{id_} .badge",{{y:-24,opacity:0,duration:0.22,ease:"power2.in"}},{t0 - 0.1 + dur - 0.24:.3f});')
 
-num("n70", at("70000"), at("filter") - 0.7, "70,000", "NEW GAMES", top=190)  # higher, clear of the TOP 100 board header
+num("n70", at("70000"), at("filter") - 0.7, "70,000", "", top=190)  # higher, clear of the TOP 100 board header
 tj, tb = at("july"), at("build")
 clip("year", tj - 0.05, tb - tj - 0.45, '<div class="year"><div class="ymask"><div class="yl">JULY</div></div><div class="ymask"><div class="yn">2026</div></div></div>')
 gt.append(f'tl.fromTo("#year .yl",{{yPercent:150}},{{yPercent:0,duration:0.45,ease:"expo.out",immediateRender:false}},{tj - 0.05:.3f}); tl.fromTo("#year .yn",{{yPercent:150}},{{yPercent:0,duration:0.5,ease:"expo.out",immediateRender:false}},{tj + 0.12:.3f}); tl.to("#year .year",{{y:-30,opacity:0,duration:0.25,ease:"power2.in"}},{tb - 0.75:.3f});')
-badge("bBuild", tb, 1.5, "BUILD", "ROBLOX'S AI GAME MAKER")
+badge("bBuild", tb, 1.2, "BUILD", "ROBLOX'S AI GAME MAKER")
 num("n500", at("half"), at("robloxs") - 0.1, "500,000", "PEOPLE TRIED IT")
 badge("bPeak", at("peak"), 1.9, "PEAK", "INDIE GAME · AGGRO CRAB")
 num("n80", at("80"), at("see") - 0.35, "80%", "OF ROBLOX'S TOP 100")
 badge("bTD", at("troll"), 1.6, "TROLL DUELS", "MADE ENTIRELY WITH AI", top=680)  # below the arena banner
 ta, td = at("also"), at("did")
-clip("stamp", ta - 0.05, td - ta + 0.05, '<div class="stamp"><div class="s1">THIS VIDEO</div><div class="s2">AI-MADE</div></div>')
+clip("stamp", ta - 0.05, td - ta + 0.05, '<div class="stamp" style="top:1440px"><div class="s1">THIS VIDEO</div><div class="s2">AI-MADE</div></div>')
 gt.append(f'tl.fromTo("#stamp .stamp",{{scale:2.2,rotation:-14,opacity:0}},{{scale:1,rotation:-7,opacity:1,duration:0.22,ease:"power4.in",immediateRender:false}},{ta - 0.05:.3f}); tl.to("#stamp .stamp",{{opacity:0,duration:0.15}},{td - 0.15:.3f});')
 tf, tr = at("first"), at("revealing")
 clip("pet", tf - 0.15, tr - tf + 0.05, '<div class="ticket"><span>FIRST WEEK</span><span class="arr">→</span><span>OG PET</span></div>')

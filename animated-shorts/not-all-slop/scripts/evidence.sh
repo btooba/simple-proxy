@@ -6,7 +6,7 @@ set -e
 V="$1"; O="$2"; mkdir -p "$O"
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 ffprobe -v error -show_entries stream=codec_type,width,height,r_frame_rate:format=duration -of compact "$V" > "$O/format.txt"
-ffmpeg -v error -y -i "$V" -vf "fps=1,scale=270:-1,drawtext=text='%{pts\:hms}':x=8:y=8:fontsize=22:fontcolor=white:box=1:boxcolor=black@0.6,tile=6x2" "$O/sheet_%02d.jpg"
+ffmpeg -v error -y -i "$V" -vf "select='not(mod(n\,30))',scale=270:-1,drawtext=text='%{pts\:hms}':x=8:y=8:fontsize=22:fontcolor=white:box=1:boxcolor=black@0.6,tile=6x2" -vsync vfr "$O/sheet_%02d.jpg"
 ffmpeg -hide_banner -nostats -i "$V" -af ebur128=peak=true -f null - 2>&1 | grep -A14 Summary > "$O/loudness.txt"
 ffmpeg -hide_banner -nostats -i "$V" -vf "blackdetect=d=0.1:pix_th=0.08" -an -f null - 2>&1 | grep -o "black_start.*" > "$O/black.txt" || true
 ffmpeg -hide_banner -nostats -i "$V" -vf "freezedetect=n=0.002:d=0.5" -an -f null - 2>&1 | grep -oE "freeze_(start|end|duration).*" > "$O/freeze.txt" || true

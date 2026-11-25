@@ -630,7 +630,7 @@ key(T.everybody - 0.05, [0.8, 1.85, 10.0], [0.3, 1.75, 6.4], 37, 0);
 key(T.everybody + 0.9, [0, 2.6, 13.8], [0, 1.7, 4.8], 44, 0);
 key(T.slop3 - 0.05, [0, 2.5, 12.8], [0, 1.7, 4.8], 42, 0);
 key(T.slop3 + 0.8, [0.9, 1.75, 9.4], [0.35, 1.5, 6.4], 38, 0);
-key(CUT2, [0.6, 1.6, 8.2], [0.35, 1.4, 6.4], 32, 0);
+key(CUT2, [0.7, 1.62, 8.7], [0.35, 1.4, 6.4], 35, 0);  // gentler push-in leaves room for the caption above the head
 // Troll Duels arena
 key(CUT2 + 0.01, a(2, 6, 18), a(0, 1.5, 0), 44, 0, true);
 key(T.but - 0.1, a(1, 4, 14), a(0.4, 1.5, 0), 44, 0);
@@ -639,8 +639,11 @@ key(T.flipping + 0.25, a(1.2, 2.0, 7.0), a(1.4, 1.2, 0), 40, Math.PI);
 key(T.dropping - 0.25, a(1.3, 2.0, 6.8), a(1.4, 1.2, 0), 39, Math.PI);
 key(T.dropping + 0.05, a(2.6, 1.8, 7.0), a(3.3, 0.8, 0.8), 42, 0);
 key(T.launching - 0.05, a(3.6, 1.9, 7.4), a(4.6, 0.5, 0.8), 44, 0);
-key(T.bomb - 0.4, a(0.8, 2.4, 9.0), a(1.6, 1.2, -0.4), 42, 0);
-key(T.funny + 0.4, a(0.8, 3.4, 10.5), a(1.6, 4.0, -0.4), 44, 0);
+key(T.other - 0.02, a(3.8, 1.9, 7.5), a(4.8, 0.5, 0.8), 44, 0);
+// cut wide and centred: both teams, the bomb and the whole TROLL DUELS banner in frame
+key(T.other, a(0.6, 2.6, 12.8), a(0.8, 1.2, -1.0), 44, 0, true);
+key(T.bomb - 0.1, a(0.6, 2.55, 12.3), a(0.8, 1.2, -1.0), 44, 0);
+key(T.funny + 0.4, a(0.8, 4.0, 14.5), a(1.0, 5.0, -1.0), 46, 0);
 // twist: pull back, island floating high over the fields
 key(T.also + 0.6, a(7, 6, 28), a(0, -2, 0), 44, 0);
 key(T.troll2 - 0.1, a(10, 8, 36), a(0, -4, 0), 44, 0);
@@ -739,7 +742,7 @@ function fxAt(t, cam) {
   if (t > T.launching + 0.1 && t < BOOM) { const u = clamp((t - T.launching - 0.1) / 0.35); show(FX.bomb, V(ax + 1.7, ay + 0.48 + (1 - u * u) * 4, az - 0.8), 1 + Math.sin(t * 30) * 0.04 * u); show(FX.spark2, V(ax + 2.02, ay + 1.0 + (1 - u * u) * 4, az - 0.75), 0.5 + Math.abs(Math.sin(t * 25)) * 0.4, t * 9); }
   if (t > BOOM && t < BOOM + 0.6) { const u = (t - BOOM) / 0.6; show(FX.boom, V(ax + 1.7, ay + 1.4, az - 0.8), (0.4 + u * 1.2) * (u < 0.8 ? 1 : (1 - u) * 5), u * 0.8); }
   if (t > BOOM + 0.05 && t < BOOM + 1.2) show(FX.puff, V(ax + 1.7, ay + 0.6, az - 0.3), (0.8 + (t - BOOM) * 1.6) * 1.4);
-  if (t > T.slop4 - 0.05 && t < T.troll2) show(FX.qBig, V(ax + 3, ay + 4.5, az - 2), pop(T.slop4) * 0.7);
+  if (t > T.slop4 - 0.05 && t < T.troll2) show(FX.qBig, V(ax + 5.4, ay + 3.2, az - 1.5), pop(T.slop4) * 0.7);  // beside the banner, not over it
   if (t > T.limited - 0.1 && t < END) { show(FX.spark, V(ax + 2.6, ay + 1.5, az + 2.5), (0.6 + Math.abs(Math.sin(t * 4)) * 0.4) * pop(T.limited), t * 2); show(FX.spark2, V(ax + 2.7, ay + 0.4, az + 3.0), (0.5 + Math.abs(Math.sin(t * 5 + 1)) * 0.5) * pop(T.limited + 0.1), -t * 2); }
   if (t > T.limited - 0.35 && t < T.limited + 0.2) show(FX.puff, V(ax + 1.95, ay + 0.4, az + 2.5), pop(T.limited - 0.35) * 1.3);
 }
@@ -774,7 +777,7 @@ function propsAt(t) {
   const typed = Math.round(14 * clamp((t - T.type) / (T.sentence + 0.5 - T.type)));
   drawPhone(t < T.type ? 0 : typed, t > T.game - 0.05 ? 2 : (t > T.sentence + 0.55 ? 1 : 0), t > T.type - 0.4 && t < T.game && (Math.floor(t * 4) % 2 === 0));
   // arena signs
-  soonSign.visible = t > T.troll2 - 0.2; soonSign.position.set(A.x + 3.2, A.y - 2.2 * (1 - ease(T.coming - 0.4, T.coming + 0.1, t)), A.z + 0.8); soonSign.rotation.y = -0.25;
+  soonSign.visible = t > T.troll2 - 0.2 && t < T.first + 0.2; soonSign.position.set(A.x + 3.2, A.y - 2.2 * (1 - ease(T.coming - 0.4, T.coming + 0.1, t)) - 2.4 * ease(T.first - 0.25, T.first + 0.15, t), A.z + 0.8);  // sinks as the FIRST WEEK ticket arrives soonSign.rotation.y = -0.25;
   crate.visible = t > T.limited - 0.4; { const u = ease(T.limited - 0.4, T.limited - 0.1, t); crate.position.set(A.x + 1.95, A.y + (1 - u) * 4, A.z + 2.3); const wob = t > T.revealing ? 0.12 : 0.05; crate.rotation.set(0, -0.35, Math.sin(t * 18) * wob * (Math.sin(t * 3) > 0.2 ? 1 : 0.2)); }
 }
 

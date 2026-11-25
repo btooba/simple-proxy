@@ -1,5 +1,5 @@
 """Music + sound effects synthesized in code (no licences, no paid tools), mixed under the voice.
-Music sits 12 LU under the voice, each effect ~12 dB under the voice's loudest moments, mix at -14 LUFS.
+Music sits at least 12 LU under the voice in every section, each effect ~12 dB under the voice's loudest moments, mix at -14 LUFS.
 Usage: python make_audio.py  -> assets/mix.wav (48 kHz stereo) + prints levels."""
 import json, pathlib, subprocess
 import numpy as np, soundfile as sf, pyloudnorm as pyln
@@ -71,11 +71,11 @@ for b in range(nb):
         else: put(music, clap * 0.45, t0)
     if arena and b % 2 == 0: put(music, bell(tri[(b // 2) % 3] * 2) * 0.12, t0 + beat * 0.25)
 fade = np.ones(N); fl = int(0.35 * SR); fade[-fl:] = np.linspace(1, 0, fl); music *= fade
-music *= 10 ** ((-28 - meter.integrated_loudness(music)) / 20)  # 12 LU under the voice (Ben's rule)
+music *= 10 ** ((-32.5 - meter.integrated_loudness(music)) / 20)  # 16.5 LU under overall so every section stays >= 12 LU under (Ben's rule)
 
 # ---------- sound effects ----------
-FX = []  # (signal, time)
-def sfx(x, t0): FX.append((x, t0))
+FX = []  # (signal, time, extra dB)
+def sfx(x, t0, db=0.0): FX.append((x, t0, db))
 def chirp(f0, f1, d): t = tt(d); return np.sin(2 * np.pi * np.cumsum(np.linspace(f0, f1, len(t))) / SR)
 pop = chirp(500, 1300, 0.09) * env(0.09, 0.002, 0.03)
 whoosh = lambda d=0.4: lowpass(noise(d), 0.12) * np.sin(np.pi * tt(d) / d) ** 2
@@ -99,7 +99,7 @@ while True:
     ts = k / 2.2; k += 1
     if ts >= T["everybody"]: break
     if ts >= T["camera"] - 0.05: sfx(click * 1.4, ts); sfx(click, ts + 0.05)
-sfx(whoosh(0.3), T["flipping"] - 0.05); sfx(whoosh(0.3), T["dropping"] - 0.3)
+sfx(whoosh(0.3), T["flipping"] + 0.32, -6);  # after the word "flipping" (it masked it), with the screen roll sfx(whoosh(0.3), T["dropping"] - 0.3)
 slip = T["dropping"] + 0.55
 d = 0.5; tb = tt(d); sfx(np.sin(2 * np.pi * np.cumsum(260 + 160 * np.sin(2 * np.pi * 9 * tb) * np.exp(-tb / 0.25)) / SR) * env(d, 0.003, 0.2), slip)
 sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25)
@@ -112,15 +112,22 @@ sfx(whoosh(0.35), T["coming"] - 0.35); sfx(pop, T["follow"] - 0.05)
 sfx_bus = np.zeros(N)
 v_pk = np.max(np.abs(voice))
 target = v_mom - 12
-for x, t0 in FX:
+for x, t0, db in FX:
     seg = np.pad(x, (0, max(0, int(0.4 * SR) - len(x))))
     try: l = pyln.Meter(SR, block_size=0.4).integrated_loudness(seg)
     except Exception: l = -70
     g = 10 ** ((target - l) / 20) if l > -70 else 0
     g = min(g, 0.5 * v_pk / max(np.max(np.abs(x)), 1e-9))  # short clicks read quiet over 0.4 s; cap their peak at half the voice's
-    put(sfx_bus, x * g, t0)
+    put(sfx_bus, x * g * 10 ** (db / 20), t0)
 
 mix = voice + music + sfx_bus
+# section check: voice vs music short-term loudness (3 s windows, voiced windows only)
+st3 = pyln.Meter(SR, block_size=3.0); gaps = []
+for i in range(0, N - 3 * SR, SR // 2):
+    v, m = voice[i:i + 3 * SR], music[i:i + 3 * SR]
+    if np.sqrt(np.mean(v ** 2)) < 0.01: continue
+    gaps.append((st3.integrated_loudness(v) - st3.integrated_loudness(m), i / SR))
+g_min = min(gaps); print(f"music under voice: smallest 3 s gap {g_min[0]:.1f} LU at {g_min[1]:.1f} s")
 mix *= 10 ** ((-17.5 - meter.integrated_loudness(mix)) / 20)
 lim = 10 ** (-1.5 / 20); mix = np.where(np.abs(mix) > lim * 0.8, np.sign(mix) * (lim * 0.8 + (lim * 0.2) * np.tanh((np.abs(mix) - lim * 0.8) / (lim * 0.2))), mix)
 sf.write(P / "assets" / "mix_pre.wav", np.stack([mix, mix], 1), SR, subtype="PCM_16")
