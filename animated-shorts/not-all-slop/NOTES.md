@@ -33,6 +33,28 @@ python scripts/align.py words_raw.json && python scripts/make_timing.py && pytho
 pace_voice.py shortens long pauses and speeds each stretch of speech 1.08-1.28x (slow stretches more), pitch kept.
 The video length now comes from the voice (`T.end` in timing.js = 70.2 s); 9 render pieces.
 
+## Voice v3 (2026-11-26): natural pacing + exact word timing
+Ben on v2: "the timing of his voice and the video is too off. he sounds very robotic. give him real human like tempo".
+Causes: v2 sped every phrase by a different amount (1.08-1.28x) and flattened all pauses to 0.12/0.18/0.28 s; and the captions
+and scene cues came from whisper word times, which were off by up to ~0.9 s (it put "phone." inside the pause after it), and
+align.py forced the first word of every sentence to the middle of the pause before it (captions showed up early).
+Fixes:
+- pace_voice.py now uses ONE speed for the whole read (rubberband 1.1x, pitch kept) and shortens pauses in proportion
+  (0.2 s stays ~0.19, 0.9 s -> 0.55 s, before the 1.1x), cutting inside the silence with crossfades. 91.8 s -> 79.0 s.
+- force_align.py: CTC forced alignment of spoken.txt with the free wav2vec2-base-960h ONNX model
+  (/opt/video-tools/models/w2v, from huggingface Xenova/wav2vec2-base-960h): all 224 words placed, mean error ~0.05 s
+  against the real voice starts, and starts after a pause snapped to the exact moment the voice comes back.
+- align.py keeps a matched first/last word's own time instead of forcing it to the line window edge.
+- overlays.py: "So if AI" captions moved below the PIRATE OURS sign (the close-up lasts longer now).
+```
+python scripts/pace_voice.py assets/voice_src/elevenlabs_larry.mp3 1.1        # -> assets/voice_raw.wav, 79.0 s
+python scripts/force_align.py assets/voice_raw.wav words_raw.json              # exact word times
+python scripts/lines_from_words.py words_raw.json <voice_raw seconds>
+python scripts/align.py words_raw.json && python scripts/make_timing.py && python scripts/overlays.py && python scripts/make_audio.py
+```
+(snap_words.py and check_sync.py are whisper-based helpers tried first; force_align.py replaced them.)
+Video is now 79.2 s: 10 render pieces (0-8 ... 64-72, 72-79.2).
+
 ## Rebuild from scratch
 ```
 python scripts/voice.py <voice> <speed>      # with /opt/video-tools/venv/bin/python; needs models/kokoro-v1.0.onnx (full model). The 2026-11-25 render used the older per-sentence version (git history): af_heart 1.3, 0.12 s gaps

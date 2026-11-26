@@ -31,6 +31,7 @@ STRIP = {"70000"}         # number shown by a card; the rest of the chunk is sti
 CAPTOP = [  # anchored to words so they follow any voice; the first range that contains a chunk's first word wins
     (at("game") - 0.05, at("no") - 0.02, 1440),            # "game." between the PLAY button and the held card
     (at("no") - 0.02, at("clickers") - 0.03, 1480),        # held CLICK SIM card, crowd, help poster
+    (at("so") - 0.05, at("why") - 0.05, 1500),             # close-up of the PIRATE OURS sign: caption below the sign
     (at("camera") - 0.45, at("slop", 3) - 0.45, 1480),     # night shot: maker's face
     (at("slop", 3) - 0.45, at("made") - 0.15, 230),        # close-up with the held card: caption above the head
     (at("flipping") - 0.45, at("dropping") - 0.1, 1480),    # screen flip: spinning faces, dizzy stars

@@ -1,21 +1,23 @@
-"""Tighten an outside voiceover (e.g. an ElevenLabs MP3) for Shorts pacing.
-- Long pauses are shortened (>= 0.5 s -> 0.28 s, 0.25-0.5 s -> 0.18 s, short ones capped at 0.12 s).
-- Each stretch of speech between pauses is sped up with pitch kept (ffmpeg atempo): slow stretches more,
-  fast ones less, so the delivery sounds even. Tempo stays within 1.08x-1.28x.
-Usage: python pace_voice.py <voice.mp3|wav> <whisper words.json of that file> [target syllables/s]
-Writes assets/voice_raw.wav (44.1 kHz mono) and prints the new length."""
-import json, pathlib, re, subprocess, sys, tempfile
+"""Tighten an outside voiceover (e.g. an ElevenLabs MP3) for Shorts without making it sound robotic.
+- One even speed for the whole read (ffmpeg rubberband, pitch kept), so the speaker's own rhythm survives.
+  (v2 sped each phrase by a different amount and flattened every pause -> Ben: "sounds very robotic".)
+- Pauses are shortened in proportion, not flattened: short ones stay, long ones shrink the most,
+  so a comma still sounds shorter than a full stop, and a full stop shorter than a new paragraph.
+  Cuts are made in the middle of each pause with short crossfades, so word endings and breaths stay.
+Usage: python pace_voice.py <voice.mp3|wav> [tempo, default 1.1]
+Writes assets/voice_raw.wav (44.1 kHz mono) and prints the pause changes and the new length."""
+import pathlib, subprocess, sys, tempfile
 import numpy as np, soundfile as sf
 
 P = pathlib.Path(__file__).resolve().parent.parent
-src, wpath = sys.argv[1], sys.argv[2]
-TARGET = float(sys.argv[3]) if len(sys.argv) > 3 else 5.0
+src = sys.argv[1]
+TEMPO = float(sys.argv[2]) if len(sys.argv) > 2 else 1.1
 SR = 44100
 tmp = pathlib.Path(tempfile.mkdtemp())
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-ac", "1", "-ar", str(SR), str(tmp / "in.wav")], check=True)
 x, _ = sf.read(tmp / "in.wav")
 
-# --- pauses: 10 ms frames below -40 dBFS for at least 0.12 s
+# --- pauses: 10 ms frames below -40 dBFS for at least 0.15 s
 fr = int(0.01 * SR); n = len(x) // fr
 db = 20 * np.log10(np.sqrt(np.mean(x[:n * fr].reshape(n, fr) ** 2, axis=1)) + 1e-9)
 quiet = db < -40
@@ -24,49 +26,38 @@ while i < n:
     if quiet[i]:
         j = i
         while j < n and quiet[j]: j += 1
-        if (j - i) * 0.01 >= 0.12 or i == 0 or j == n: runs.append((i * fr, min(j * fr, len(x))))
+        if j - i >= 15: runs.append((i * fr, min(j * fr, len(x))))
         i = j
     else: i += 1
-speech, last = [], 0
+
+def new_len(d):
+    """Shorten in proportion: 0.2 s -> 0.19, 0.4 s -> 0.31, 0.7 s -> 0.47, 0.9 s+ -> 0.55 (before the speed change)."""
+    return min(d, 0.15 + 0.6 * (d - 0.15), 0.55)
+
+XF = int(0.012 * SR)
+keep, last, report = [], 0, []
 for a, b in runs:
-    if a > last: speech.append((last, a))
-    last = b
-if last < len(x): speech.append((last, len(x)))
+    d = (b - a) / SR
+    if a == 0: last = max(0, b - int(0.05 * SR)); continue                  # lead-in silence -> 50 ms
+    if b >= len(x): keep.append((last, min(len(x), a + int(0.15 * SR)))); last = None; break   # tail -> 150 ms
+    nd = new_len(d)
+    cut = int((d - nd) * SR)
+    if cut > 2 * XF:
+        mid = (a + b) // 2
+        keep.append((last, mid - cut // 2)); last = mid + cut // 2
+    report.append((a / SR, d, nd))
+if last is not None: keep.append((last, len(x)))
 
-# --- syllables per stretch, from whisper words (numbers expanded to how they are said)
-NUM = {"70,000": "seventy thousand", "2026": "twenty twenty six", "2026,": "twenty twenty six", "80%": "eighty percent", "100": "one hundred"}
-syl = lambda w: max(1, len(re.findall(r"[aeiouy]+", re.sub(r"e\b", "", w.lower()))))
-J = json.load(open(wpath))
-W = [((s["offsets"]["from"] + s["offsets"]["to"]) / 2000, s["text"].strip()) for s in J["transcription"] if s["text"].strip()]
-def syllables(a, b):
-    tot = 0
-    for t, w in W:
-        if a / SR - 0.05 <= t < b / SR + 0.05:
-            for part in NUM.get(w, w).split():
-                part = re.sub(r"[^A-Za-z']", "", part)
-                if part: tot += syl(part)
-    return tot
-
-def pause_len(d):
-    return 0.28 if d >= 0.5 else (0.18 if d >= 0.25 else min(d, 0.12))
-
-out, report = [], []
-gaps = [(speech[k][1], speech[k + 1][0]) for k in range(len(speech) - 1)]
-for k, (a, b) in enumerate(speech):
-    seg = x[a:b]; d = (b - a) / SR; sy = syllables(a, b)
-    rate = sy / d if d > 0 else TARGET
-    tempo = 1.15 if d < 0.9 or sy == 0 else float(np.clip(TARGET / rate, 1.08, 1.28))
-    sf.write(tmp / "s.wav", seg, SR)
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / "s.wav"), "-af", f"atempo={tempo:.4f}", str(tmp / "t.wav")], check=True)
-    y, _ = sf.read(tmp / "t.wav")
-    f = min(int(0.004 * SR), len(y) // 2)
-    if f > 0: y[:f] *= np.linspace(0, 1, f); y[-f:] *= np.linspace(1, 0, f)
-    if k == 0: out.append(np.zeros(int(0.03 * SR)))
-    out.append(y)
-    if k < len(gaps): out.append(np.zeros(int(pause_len((gaps[k][1] - gaps[k][0]) / SR) * SR)))
-    report.append((a / SR, d, sy, rate, tempo))
-out.append(np.zeros(int(0.12 * SR)))
-y = np.concatenate(out)
-sf.write(P / "assets" / "voice_raw.wav", y, SR)
-for a, d, sy, r, t in report: print(f"{a:6.2f}s  {d:4.2f}s  {sy:3d} syl  {r:4.1f}/s -> x{t:.2f}")
-print(f"before {len(x) / SR:.1f}s -> after {len(y) / SR:.1f}s")
+out = x[keep[0][0]:keep[0][1]].copy()
+ramp = np.linspace(0, 1, XF)
+for s, e in keep[1:]:
+    seg = x[s:e]
+    out[-XF:] = out[-XF:] * (1 - ramp) + seg[:XF] * ramp                  # crossfade inside the silence
+    out = np.concatenate([out, seg[XF:]])
+sf.write(tmp / "cut.wav", out, SR)
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / "cut.wav"), "-af",
+                f"rubberband=tempo={TEMPO}:transients=smooth:detector=soft:window=standard:formant=preserved:pitchq=quality",
+                "-ar", str(SR), str(P / "assets" / "voice_raw.wav")], check=True)
+y, _ = sf.read(P / "assets" / "voice_raw.wav")
+for t, d, nd in report: print(f"{t:6.2f}s  pause {d:4.2f} -> {nd:4.2f}  (heard {nd / TEMPO:4.2f})")
+print(f"before {len(x) / SR:.1f}s -> pauses trimmed {len(out) / SR:.1f}s -> x{TEMPO} = {len(y) / SR:.1f}s")

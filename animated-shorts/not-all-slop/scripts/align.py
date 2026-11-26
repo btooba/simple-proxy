@@ -29,8 +29,10 @@ for L in lines:
         if "s" in toks[i]:
             toks[i]["s"] = min(max(toks[i]["s"], s0), e0)
             toks[i]["e"] = min(max(toks[i]["e"], toks[i]["s"] + 0.05), e0)
-    toks[idx[0]]["s"] = s0
-    toks[idx[-1]]["e"] = e0
+    # a line's first/last word keeps its heard time when whisper matched it (line windows run to the middle of
+    # the pause, so forcing them made the first caption of every sentence show up during the pause, early)
+    if "s" not in toks[idx[0]]: toks[idx[0]]["s"] = s0
+    if "e" not in toks[idx[-1]]: toks[idx[-1]]["e"] = e0
     k = 0
     while k < len(idx):
         if "e" in toks[idx[k]] and "s" in toks[idx[k]]:
