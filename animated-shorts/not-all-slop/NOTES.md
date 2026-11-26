@@ -21,7 +21,7 @@ Skill: github.com/brinderr/animated-shorts (cloned to /home/user/brinderr/animat
 
 ## Rebuild from scratch
 ```
-python scripts/voice.py af_heart 1.3 0.12   # with /opt/video-tools/venv/bin/python
+python scripts/voice.py <voice> <speed>      # with /opt/video-tools/venv/bin/python; needs models/kokoro-v1.0.onnx (full model). The 2026-11-25 render used the older per-sentence version (git history): af_heart 1.3, 0.12 s gaps
 whisper-cli -m /opt/video-tools/models/ggml-base.en.bin -f <voice 16k wav> -ml 1 -sow -oj -of words_raw
 python scripts/align.py words_raw.json && python scripts/make_timing.py && python scripts/overlays.py
 python scripts/make_audio.py   # writes assets/mix.wav (includes the two-pass loudnorm + AAC true-peak check)

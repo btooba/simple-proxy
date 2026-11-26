@@ -1,23 +1,62 @@
-"""Narration with the free local Kokoro voice: one line per sentence, edges trimmed, short gaps.
-Writes assets/voice.wav (24 kHz mono) and lines.json (start/end of each sentence)."""
-import json, os, pathlib, sys
+"""Narration with the free local Kokoro voice (full-precision model, no paid AI).
+The whole script is read in one continuous pass so the delivery flows across sentences,
+and tricky words get fixed pronunciations:
+  Roblox -> "ROH-blocks" (the default dictionary says "RAH-blocks")
+  A.I.   -> read as "AI" (with dots it paused after each letter)
+  O.G.   -> "oh-jee" in one go (with dots it paused; without, it said "og")
+Usage:
+  voice.py <voice> <speed>                      -> assets/voice_raw.wav + lines.json
+  voice.py <voice> <speed> --sample <out.wav>   -> short sample with the tricky words
+  voice.py --phonemes                           -> print the phonemes of every line (check fixes)"""
+import json, os, pathlib, re, sys
 import numpy as np, soundfile as sf
 from kokoro_onnx import Kokoro
+from kokoro_onnx.tokenizer import Tokenizer
+
 P = pathlib.Path(__file__).resolve().parent.parent
 M = pathlib.Path(os.environ.get("VIDEO_TOOLS", "/opt/video-tools")) / "models"
-voice, speed, gap = sys.argv[1], float(sys.argv[2]), float(sys.argv[3])
-k = Kokoro(str(M / "kokoro-v1.0.int8.onnx"), str(M / "voices-v1.0.bin"))
-lines = [l.strip() for l in (P / "spoken.txt").read_text().splitlines() if l.strip()]
-out, meta, t, sr = [], [], 0.0, 24000
-for i, line in enumerate(lines):
-    a, sr = k.create(line, voice=voice, speed=speed, lang="en-us")
+SR = 24000
+FIX = [("ɹˈɑːblɑːks", "ɹˈoʊblɑːks")]          # Roblox, Roblox's (suffix stays)
+WORD_FIX = {"og": "ˌoʊdʒˈiː"}                 # whole phoneme words, matched after cleaning
+tok = Tokenizer()
+
+def text_for_voice(line):
+    line = re.sub(r"A\.I\.(?=\s+[A-Z]|\s*$)", "AI.", line)   # sentence-final A.I. keeps its full stop
+    return line.replace("A.I.", "AI").replace("O.G.", "OG")
+
+def phonemes(line):
+    ph = tok.phonemize(text_for_voice(line), "en-us")
+    for a, b in FIX: ph = ph.replace(a, b)
+    # replace whole phoneme words (keep trailing punctuation)
+    out = []
+    for w in ph.split(" "):
+        core = w.rstrip(".,?!:;")
+        if text_for_voice(line).lower().count(" og ") and core == "ˈɑːɡ": w = WORD_FIX["og"] + w[len(core):]
+        out.append(w)
+    return " ".join(out)
+
+def lines():
+    return [l.strip() for l in (P / "spoken.txt").read_text().splitlines() if l.strip()]
+
+def speak(k, text_lines, voice, speed):
+    ph = " ".join(phonemes(l) for l in text_lines)
+    a, sr = k.create(ph, voice=voice, speed=speed, is_phonemes=True, sentence_pause=0.16, clause_pause=0.06)
     on = np.where(np.abs(a) > 0.01)[0]
-    a = a[max(0, on[0] - int(0.02 * sr)): on[-1] + int(0.06 * sr)]
-    meta.append({"i": i, "text": line, "start": round(t, 3), "end": round(t + len(a) / sr, 3)})
-    out.append(a); t += len(a) / sr
-    if i < len(lines) - 1:
-        out.append(np.zeros(int(gap * sr), dtype=a.dtype)); t += gap
-sf.write(P / "assets" / "voice_raw.wav", np.concatenate(out), sr)
-(P / "lines.json").write_text(json.dumps({"voice": voice, "speed": speed, "gap": gap, "duration": round(t, 3), "lines": meta}, indent=1))
-words = sum(len(l.split()) for l in lines)
-print(f"{t:.2f}s  {words} words  {words / t:.2f} words/s")
+    return a[max(0, on[0] - int(0.02 * SR)): on[-1] + int(0.08 * SR)]
+
+if __name__ == "__main__":
+    if sys.argv[1] == "--phonemes":
+        for l in lines(): print(phonemes(l))
+        sys.exit()
+    voice, speed = sys.argv[1], float(sys.argv[2])
+    k = Kokoro(str(M / "kokoro-v1.0.onnx"), str(M / "voices-v1.0.bin"))
+    L = lines()
+    if "--sample" in sys.argv:
+        out = sys.argv[sys.argv.index("--sample") + 1]
+        pick = [L[0], L[2], L[8], L[14]]   # Roblox x3, AI x2, Troll Duels
+        sf.write(out, speak(k, pick, voice, speed), SR); sys.exit()
+    a = speak(k, L, voice, speed)
+    sf.write(P / "assets" / "voice_raw.wav", a, SR)
+    t = len(a) / SR; words = sum(len(l.split()) for l in L)
+    (P / "lines.json").write_text(json.dumps({"voice": voice, "speed": speed, "duration": round(t, 3), "lines": [{"i": i, "text": l} for i, l in enumerate(L)]}, indent=1))
+    print(f"{t:.2f}s  {words} words  {words / t:.2f} words/s")
