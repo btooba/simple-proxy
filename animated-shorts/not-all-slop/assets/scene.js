@@ -3,7 +3,7 @@
 import * as THREE from './three.module.js';
 import { T } from './timing.js';
 
-const W = 1080, H = 1920, FPS = 30, END = 63.2;
+const W = 1080, H = 1920, FPS = 30, END = T.end;  // video length comes from the voice (timing.js)
 
 // ---------- helpers ----------
 function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }

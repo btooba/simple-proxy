@@ -5,9 +5,10 @@ import json, pathlib, subprocess
 import numpy as np, soundfile as sf, pyloudnorm as pyln
 
 P = pathlib.Path(__file__).resolve().parent.parent
-SR, D = 48000, 63.2
-N = int(SR * D)
+SR = 48000
 T = json.loads((P / "assets" / "timing.js").read_text().split("= ", 1)[1].rstrip().rstrip(";"))
+D = T["end"]  # video length comes from the voice
+N = int(SR * D)
 BOOM = T["bomb"] + 0.14
 rng = np.random.default_rng(7)
 

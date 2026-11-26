@@ -2,7 +2,8 @@
 Adapted from animated-shorts/templates/scripts/overlays.py."""
 import json, pathlib, re
 P = pathlib.Path(__file__).resolve().parent.parent
-W = json.loads((P / "words.json").read_text()); D = 63.2
+W = json.loads((P / "words.json").read_text())
+T = json.loads((P / "assets" / "timing.js").read_text().split("= ", 1)[1].rstrip().rstrip(";")); D = T["end"]  # video length from the voice
 html_path = P / "index.html"
 norm = lambda w: re.sub(r"[^a-z0-9]", "", w.lower())
 def at(word, n=1):
@@ -27,7 +28,15 @@ KEY = {"filter", "hide", "build", "sentence", "game", "code", "art", "clickers",
 SKIP = {"july", "2026", "80"}      # chunks shown by a title card instead
 STRIP = {"70000"}         # number shown by a card; the rest of the chunk is still captioned
 # caption height per shot, by chunk start time: keeps captions off faces and held props
-CAPTOP = [(10.6, 11.0, 1440), (11.0, 15.75, 1480), (34.6, 39.8, 1480), (39.8, 42.98, 230), (46.5, 48.0, 1480), (50.7, 51.2, 1480), (58.2, 60.65, 1520)]  # crate shots: text ends above ~1630 px, clear of app UI
+CAPTOP = [  # anchored to words so they follow any voice; the first range that contains a chunk's first word wins
+    (at("game") - 0.05, at("no") - 0.02, 1440),            # "game." between the PLAY button and the held card
+    (at("no") - 0.02, at("clickers") - 0.03, 1480),        # held CLICK SIM card, crowd, help poster
+    (at("camera") - 0.45, at("slop", 3) - 0.45, 1480),     # night shot: maker's face
+    (at("slop", 3) - 0.45, at("made") - 0.15, 230),        # close-up with the held card: caption above the head
+    (at("flipping") - 0.45, at("dropping") - 0.1, 1480),    # screen flip: spinning faces, dizzy stars
+    (at("funny") - 0.1, at("funny") + 0.4, 1480),          # "funny.": launched heads
+    (at("limited") - 0.3, at("revealing") + 0.05, 1520),   # crate shots: text ends above ~1630 px, clear of app UI
+]
 out, tw = [], []
 for k, c in enumerate(chunks):
     if any(norm(w["w"]) in SKIP for w in c): continue
@@ -65,7 +74,7 @@ gt.append(f'tl.fromTo("#year .yl",{{yPercent:150}},{{yPercent:0,duration:0.45,ea
 badge("bBuild", tb, 1.0, "BUILD", "ROBLOX'S AI GAME MAKER", top=110)  # high and short: clear of the phone's own BUILD header
 num("n500", at("half"), at("robloxs") - 0.1, "500,000", "PEOPLE TRIED IT")
 badge("bPeak", at("peak"), 1.9, "PEAK", "INDIE GAME · AGGRO CRAB")
-num("n80", at("80"), at("see") - 0.35, "80%", "OF ROBLOX'S TOP 100")
+num("n80", at("80"), at("ai", 3) - 0.35, "80%", "OF ROBLOX'S TOP 100")
 badge("bTD", at("troll"), 1.6, "TROLL DUELS", "MADE ENTIRELY WITH AI", top=680)  # below the arena banner
 ta, td = at("also"), at("did")
 clip("stamp", ta - 0.05, td - ta + 0.05, '<div class="stamp" style="top:1440px"><div class="s1">THIS VIDEO</div><div class="s2">AI-MADE</div></div>')
@@ -78,6 +87,9 @@ clip("follow", tfo - 0.1, D - tfo + 0.1, '<div class="follow">+ FOLLOW</div>')
 gt.append(f'tl.fromTo("#follow .follow",{{scale:0.3,opacity:0}},{{scale:1,opacity:1,duration:0.35,ease:"back.out(3)",immediateRender:false}},{tfo - 0.1:.3f}); tl.to("#follow .follow",{{scale:1.08,duration:0.18,yoyo:true,repeat:3,ease:"sine.inOut"}},{tfo + 0.4:.3f});')
 
 h = html_path.read_text()
+# composition length = voice length
+h = re.sub(r'(id="(?:root|a-roll-audio|world)"[^>]*?data-duration=")[0-9.]+(")', lambda m: f"{m.group(1)}{D}{m.group(2)}", h)
+h = re.sub(r"(tl\.to\(\{ v: 0 \}, \{ v: 1, duration: )[0-9.]+", lambda m: f"{m.group(1)}{D}", h)
 h = re.sub(r"<!-- OVERLAYS -->.*?<!-- /OVERLAYS -->", "<!-- OVERLAYS -->\n" + "\n".join(out + g) + "\n      <!-- /OVERLAYS -->", h, flags=re.S)
 h = re.sub(r"// OVTWEENS.*?// /OVTWEENS", "// OVTWEENS\n      " + "\n      ".join(tw + gt) + "\n      // /OVTWEENS", h, flags=re.S)
 html_path.write_text(h); print(len(chunks), "caption chunks;", len(g), "cards")

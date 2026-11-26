@@ -19,6 +19,20 @@ Skill: github.com/brinderr/animated-shorts (cloned to /home/user/brinderr/animat
   - Final numbers: 1080x1920, 30 fps, 63.2 s, -14.1 LUFS, true peak about -2 dBTP after AAC, music >= 12.8 LU under the voice in every 3 s section.
   - Minor items left as they are: copier cat half out of frame at 17.5-19.5 s; "So if AI" crosses the PEAK sign for ~0.2 s at 28.7 s; "top 100" on card, board and caption at 32-33 s; 500,000 card over the phone screen at 12.4-13.7 s; the very short "The" at 39.85 s is hard to hear (weak TTS word); "dropping a / banana," second line reaches ~1660 px at 47.8-48.8 s; a few <0.2 s caption crossings during fast camera moves.
 
+## Voice v2 (2026-11-26): Ben's ElevenLabs voiceover
+Ben didn't like the Kokoro voices (choppy, "A. I." gaps, "RAH-blocks"), so he made the narration himself on ElevenLabs
+("Larry - High-Energy Social Media Voice"): `assets/voice_src/elevenlabs_larry.mp3`, 91.8 s. The voice skips "You see," so
+spoken.txt drops it too (captions = spoken words) and the night-scene cue `see` now starts at "AI is like".
+```
+whisper-cli -m /opt/video-tools/models/ggml-base.en.bin -f <mp3 as 16k wav> -ml 1 -sow -oj -of src_words
+python scripts/pace_voice.py assets/voice_src/elevenlabs_larry.mp3 src_words.json 5.0   # -> assets/voice_raw.wav, 69.9 s
+whisper-cli ... -f <voice_raw as 16k wav> -ml 1 -sow -oj -of words_raw
+python scripts/lines_from_words.py words_raw.json <voice_raw seconds>   # -> lines.json
+python scripts/align.py words_raw.json && python scripts/make_timing.py && python scripts/overlays.py && python scripts/make_audio.py
+```
+pace_voice.py shortens long pauses and speeds each stretch of speech 1.08-1.28x (slow stretches more), pitch kept.
+The video length now comes from the voice (`T.end` in timing.js = 70.2 s); 9 render pieces.
+
 ## Rebuild from scratch
 ```
 python scripts/voice.py <voice> <speed>      # with /opt/video-tools/venv/bin/python; needs models/kokoro-v1.0.onnx (full model). The 2026-11-25 render used the older per-sentence version (git history): af_heart 1.3, 0.12 s gaps
