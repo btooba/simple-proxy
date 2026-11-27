@@ -1,12 +1,16 @@
 """Music + sound effects synthesized in code (no licences, no paid tools), mixed under the voice.
 Music sits at least 12 LU under the voice in every section, each effect ~12 dB under the voice's loudest moments, mix at -14 LUFS.
-Usage: python make_audio.py  -> assets/mix.wav (48 kHz stereo) + prints levels."""
-import json, pathlib, subprocess
+Usage: python make_audio.py [S = slow-down of the rendered picture, default 1.0]  -> assets/mix.wav (48 kHz stereo) + prints levels."""
+import json, pathlib, subprocess, sys
 import numpy as np, soundfile as sf, pyloudnorm as pyln
 
 P = pathlib.Path(__file__).resolve().parent.parent
 SR = 48000
 T = json.loads((P / "assets" / "timing.js").read_text().split("= ", 1)[1].rstrip().rstrip(";"))
+# S: the rendered picture is played S times slower (v4: 1.1, so Ben's voice can stay exactly as uploaded, no time-stretch).
+# Every cue and effect time is scaled by S; the music keeps its own tempo.
+S = float(sys.argv[1]) if len(sys.argv) > 1 else 1.0
+T = {k: v * S for k, v in T.items()}
 D = T["end"]  # video length comes from the voice
 N = int(SR * D)
 BOOM = T["bomb"] + 0.14
@@ -88,16 +92,16 @@ def chime():
     return out
 sfx(pop, T["game"] - 0.03); sfx(chime(), T["game"] + 0.02)
 t = T["type"]
-while t < T["sentence"] + 0.5: sfx(click, t); t += 0.07 + rng.uniform(0, 0.06)
+while t < T["sentence"] + 0.5: sfx(click, t); t += (0.07 + rng.uniform(0, 0.06)) * S
 sfx(whoosh(0.45), T["july"] - 0.3); sfx(whoosh(0.4), T["made"] - 0.6, -3)  # in the pause before "I made" (it masked "made")
 sfx(bell(1318.5) + 0.6 * bell(1975.5), T["p80"])
 for i in range(3):
     for k in range(200):
-        ts = (k - i * 0.37) / 1.7
+        ts = (k - i * 0.37) / 1.7 * S
         if T["everybody"] <= ts < T["slop3"]: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # crowd shutters, kept well under the voice
 k = 0
 while True:
-    ts = k / 2.2; k += 1
+    ts = k / 2.2 * S; k += 1
     if ts >= T["everybody"]: break
     if ts >= T["camera"] + 0.68: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # first shutter after "camera in your phone", so "in" stays clear
 sfx(whoosh(0.3), T["flipping"] + 0.32, -6)  # after the word "flipping" (it masked it), with the screen roll

@@ -4,14 +4,15 @@
 - Pauses are shortened in proportion, not flattened: short ones stay, long ones shrink the most,
   so a comma still sounds shorter than a full stop, and a full stop shorter than a new paragraph.
   Cuts are made in the middle of each pause with short crossfades, so word endings and breaths stay.
-Usage: python pace_voice.py <voice.mp3|wav> [tempo, default 1.1]
+Usage: python pace_voice.py <voice.mp3|wav> [tempo, default 1.0 = no speed change]
+Ben (2026-11-27) on the 1.1x version: "it sounds like a robot filter is on. this is not the audio that i uploaded" -> use 1.0.
 Writes assets/voice_raw.wav (44.1 kHz mono) and prints the pause changes and the new length."""
 import pathlib, subprocess, sys, tempfile
 import numpy as np, soundfile as sf
 
 P = pathlib.Path(__file__).resolve().parent.parent
 src = sys.argv[1]
-TEMPO = float(sys.argv[2]) if len(sys.argv) > 2 else 1.1
+TEMPO = float(sys.argv[2]) if len(sys.argv) > 2 else 1.0   # 1.0 = Ben's voice exactly as uploaded (any stretch sounded robotic)
 SR = 44100
 tmp = pathlib.Path(tempfile.mkdtemp())
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", src, "-ac", "1", "-ar", str(SR), str(tmp / "in.wav")], check=True)
@@ -55,7 +56,10 @@ for s, e in keep[1:]:
     out[-XF:] = out[-XF:] * (1 - ramp) + seg[:XF] * ramp                  # crossfade inside the silence
     out = np.concatenate([out, seg[XF:]])
 sf.write(tmp / "cut.wav", out, SR)
-subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / "cut.wav"), "-af",
+if TEMPO == 1.0:                                                          # no time-stretch at all: only silences were shortened
+    sf.write(P / "assets" / "voice_raw.wav", out, SR, subtype="PCM_16")
+else:
+  subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(tmp / "cut.wav"), "-af",
                 f"rubberband=tempo={TEMPO}:transients=smooth:detector=soft:window=standard:formant=preserved:pitchq=quality",
                 "-ar", str(SR), str(P / "assets" / "voice_raw.wav")], check=True)
 y, _ = sf.read(P / "assets" / "voice_raw.wav")

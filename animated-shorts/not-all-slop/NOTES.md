@@ -55,6 +55,20 @@ python scripts/align.py words_raw.json && python scripts/make_timing.py && pytho
 (snap_words.py and check_sync.py are whisper-based helpers tried first; force_align.py replaced them.)
 Video is now 79.2 s: 10 render pieces (0-8 ... 64-72, 72-79.2).
 
+## Voice v4 (2026-11-27): Ben's upload exactly as it is
+Ben on v3: "the whole audio is off, it sounds like a robot filter is on. this is not the audio that i uploaded."
+Cause: the 1.1x time-stretch (rubberband, a phase vocoder) gives speech a metallic, phasey sound.
+Fix: no stretch at all. pace_voice.py with tempo 1.0 only shortens silences (91.8 s -> 86.9 s); the voice itself is his upload.
+Forced alignment of the new voice: every word lands at 1.1001 x its v3 time (95% within 0.026 s), because v3 was exactly this
+audio sped up 1.1x. So the v3 render (79.2 s) is played 1.1x slower instead of re-rendered (about 4 h saved):
+```
+python scripts/pace_voice.py assets/voice_src/elevenlabs_larry.mp3 1.0   # -> assets/voice_raw.wav, 86.9 s, untouched voice
+python scripts/make_audio.py 1.1                                       # cues and effects at 1.1x the render timing; music keeps its tempo
+SLOW=1.1 scripts/join_chunks.sh                                        # picture setpts=1.1*PTS, fps=30 -> 87.12 s
+```
+index.html / timing.js / words.json stay in the render timing; on screen everything is at 1.1x those times.
+For a clean re-render at the new timing later: force_align on the new voice_raw.wav, then the v3 rebuild steps (12 pieces).
+
 ## Rebuild from scratch
 ```
 python scripts/voice.py <voice> <speed>      # with /opt/video-tools/venv/bin/python; needs models/kokoro-v1.0.onnx (full model). The 2026-11-25 render used the older per-sentence version (git history): af_heart 1.3, 0.12 s gaps
