@@ -67,6 +67,11 @@ python scripts/make_audio.py 1.1                                       # cues an
 SLOW=1.1 scripts/join_chunks.sh                                        # picture setpts=1.1*PTS, fps=30 -> 87.12 s
 ```
 index.html / timing.js / words.json stay in the render timing; on screen everything is at 1.1x those times.
+Review (2026-11-27, fresh reviewer): PASS. Voice matches the upload sample for sample; captions 0.09 s before their words; shots on
+their words; mild one-frame hitch in some fast camera swoops (from the 1.1x slow-down). Delivered as renders/not-all-slop.mp4.
+Open minor items (need a re-render of that piece): JULY 2026 card fading over "Roblox adds Build" at 8.95-9.2 s; the AI-MADE stamp
+border (~1690 px) and the + FOLLOW button (~1670 px) slightly below the 1650 px line at 72-73 s and 85.8-87 s.
+Sound effects v4b: earshot effects (assets/sfx) replace the synthesized ones -> renders/not-all-slop_new_sfx.mp4 (same picture).
 For a clean re-render at the new timing later: force_align on the new voice_raw.wav, then the v3 rebuild steps (12 pieces).
 
 ## Rebuild from scratch
