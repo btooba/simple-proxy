@@ -11,7 +11,7 @@ ffmpeg -hide_banner -nostats -i "$V" -af ebur128=peak=true -f null - 2>&1 | grep
 ffmpeg -hide_banner -nostats -i "$V" -vf "blackdetect=d=0.1:pix_th=0.08" -an -f null - 2>&1 | grep -o "black_start.*" > "$O/black.txt" || true
 ffmpeg -hide_banner -nostats -i "$V" -vf "freezedetect=n=0.002:d=0.5" -an -f null - 2>&1 | grep -oE "freeze_(start|end|duration).*" > "$O/freeze.txt" || true
 ffmpeg -v error -y -i "$V" -ar 16000 -ac 1 "$O/audio16k.wav"
-whisper-cli -m /opt/video-tools/models/ggml-base.en.bin -f "$O/audio16k.wav" -np -t 4 > "$O/transcript.txt" 2>/dev/null
+whisper-cli -t 2 -m /opt/video-tools/models/ggml-base.en.bin -f "$O/audio16k.wav" -np > "$O/transcript.txt" 2>/dev/null
 python3 - "$O/transcript.txt" "$HERE/spoken.txt" > "$O/transcript_check.txt" <<'EOF'
 import re, sys, difflib
 n = lambda s: re.findall(r"[a-z0-9]+", s.lower().replace("a.i.", "ai").replace("o.g.", "og").replace("70,000", "seventy thousand").replace("2026", "twenty twenty six").replace("80%", "eighty percent").replace("100", "one hundred"))
