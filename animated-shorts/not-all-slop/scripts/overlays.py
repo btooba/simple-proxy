@@ -77,15 +77,15 @@ num("n500", at("half"), at("robloxs") - 0.1, "500,000", "PEOPLE TRIED IT")
 badge("bPeak", at("peak"), 1.9, "PEAK", "INDIE GAME · AGGRO CRAB")
 num("n80", at("80"), at("ai", 3) - 0.35, "80%", "OF ROBLOX'S TOP 100")
 badge("bTD", at("troll"), 1.6, "TROLL DUELS", "MADE ENTIRELY WITH AI", top=680)  # below the arena banner
-ta, td = at("also"), at("did")
-clip("stamp", ta - 0.05, td - ta + 0.05, '<div class="stamp" style="top:1440px"><div class="s1">THIS VIDEO</div><div class="s2">AI-MADE</div></div>')
-gt.append(f'tl.fromTo("#stamp .stamp",{{scale:2.2,rotation:-14,opacity:0}},{{scale:1,rotation:-7,opacity:1,duration:0.22,ease:"power4.in",immediateRender:false}},{ta - 0.05:.3f}); tl.to("#stamp .stamp",{{opacity:0,duration:0.15}},{td - 0.15:.3f});')
+# (the "THIS VIDEO AI-MADE" stamp was removed: Ben 2026-11-27 "get rid of the buttons completely")
 tf, tr = at("first"), at("revealing")
 clip("pet", tf - 0.15, tr - tf + 0.05, '<div class="ticket"><span>FIRST WEEK</span><span class="arr">→</span><span>OG PET</span></div>')
 gt.append(f'tl.fromTo("#pet .ticket",{{x:-120,opacity:0,rotation:-6}},{{x:0,opacity:1,rotation:-3,duration:0.45,ease:"expo.out",immediateRender:false}},{tf - 0.15:.3f}); tl.to("#pet .ticket",{{x:120,opacity:0,duration:0.25,ease:"power2.in"}},{tr - 0.3:.3f});')
 tfo = at("follow")
-clip("follow", tfo - 0.1, D - tfo + 0.1, '<div class="follow">+ FOLLOW</div>')
-gt.append(f'tl.fromTo("#follow .follow",{{scale:0.3,opacity:0}},{{scale:1,opacity:1,duration:0.35,ease:"back.out(3)",immediateRender:false}},{tfo - 0.1:.3f}); tl.to("#follow .follow",{{scale:1.08,duration:0.18,yoyo:true,repeat:3,ease:"sine.inOut"}},{tfo + 0.4:.3f});')
+# end card instead of a + FOLLOW button (Ben: "get rid of the buttons completely but add a follow so you don't miss it at the end");
+# up in the empty sky, above the maker's head, held to the last frame
+clip("follow", tfo - 0.1, D - tfo + 0.1, '<div class="num" style="top:110px"><div class="nn" style="font-size:180px">FOLLOW</div><div class="nl">SO YOU DON&#39;T MISS IT</div></div>')
+gt.append(f'tl.fromTo("#follow .num",{{scale:0.4,opacity:0}},{{scale:1,opacity:1,duration:0.35,ease:"back.out(2.6)",immediateRender:false}},{tfo - 0.1:.3f}); tl.to("#follow .num",{{scale:1.06,duration:0.2,yoyo:true,repeat:3,ease:"sine.inOut"}},{tfo + 0.45:.3f});')
 
 h = html_path.read_text()
 # composition length = voice length

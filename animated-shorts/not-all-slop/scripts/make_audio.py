@@ -128,7 +128,7 @@ if EAR:
     crack = band(noise(0.7), 150, 1500) * env(0.7, 0.002, 0.13)              # so add a short mid-range crack on top
     e_boom = e_boom / np.max(np.abs(e_boom)); e_boom[:len(crack)] += 0.8 * crack / np.max(np.abs(crack))
     hit(e_boom, BOOM); hit(e_pop, T["bomb"] - 0.74)
-    hit(e_thud, T["exactly"]); hit(e_thud, T["also"] + 0.15)
+    hit(e_thud, T["exactly"])  # (the thud for the AI-MADE stamp went with the stamp)
     sfx(e_chime, T["fun"] - 0.05, -3); sfx(e_chime, T["limited"] - 0.1); hit(e_thud, T["limited"] - 0.12, -2)
     e_tom = load("reveal", 0.5)
     for i in range(3): hit(e_tom, T["revealing"] + i * 0.16, -2)
@@ -155,7 +155,7 @@ else:
     sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25)
     boom = lowpass(noise(1.2), 0.05) * env(1.2, 0.003, 0.35) * 3 + np.sin(2 * np.pi * np.cumsum(np.linspace(90, 30, int(1.2 * SR))) / SR) * env(1.2, 0.002, 0.25)
     sfx(boom, BOOM); sfx(pop, T["bomb"] - 0.75)
-    sfx(thud, T["exactly"]); sfx(thud, T["also"] + 0.15)
+    sfx(thud, T["exactly"])
     sfx(chime(), T["fun"] - 0.05); sfx(chime(), T["limited"] - 0.1); sfx(thud * 0.8, T["limited"] - 0.12)
     for i in range(3): sfx(thud * 0.6, T["revealing"] + i * 0.16)
     sfx(whoosh(0.35), T["coming"] - 0.35); sfx(pop, T["follow"] - 0.05)
