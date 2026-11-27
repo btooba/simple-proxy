@@ -103,11 +103,23 @@ def band(x, lo, hi):
     return np.fft.irfft(X, len(x))
 def hit(x, t, db=0.0): sfx(x, t - np.argmax(np.abs(x)) / SR, db)           # the loudest moment lands on t
 if EAR:
-    e_pop, e_chime, e_whoosh, e_thud = load("pop"), load("chime", 1.3), load("whoosh"), load("thud")
+    e_pop, e_chime, e_thud = load("pop"), load("chime", 1.3), load("thud")
+    def swoosh(d=0.4, f0=400.0, f1=5000.0):
+        """A real whoosh (earshot's whoosh/fast is a 50 ms puff): noise that swells to its end while it sweeps brighter,
+        then falls away in 40 ms. Placed by its END, which lands on the cut."""
+        n = int(d * SR); x = rng.standard_normal(n); y = np.zeros(n); a1 = a2 = 0.0
+        fc = f0 * (f1 / f0) ** (np.arange(n) / n)
+        k1, k2 = 1 - np.exp(-2 * np.pi * fc / SR), 1 - np.exp(-2 * np.pi * fc / 4 / SR)
+        for i in range(n):
+            a1 += k1[i] * (x[i] - a1); a2 += k2[i] * (x[i] - a2); y[i] = a1 - a2
+        e = (np.arange(n) / n) ** 2; f = int(0.04 * SR); e[-f:] *= np.linspace(1, 0, f)
+        return y * e
+    def wend(x, t_end, db=0.0): sfx(x, t_end - len(x) / SR, db)
     e_shut = [load("shutter", rate=r) for r in (1.0, 1.07, 0.94)]
     hit(e_pop, T["game"]); sfx(e_chime, T["game"] + 0.25, -4)  # after the pop, so it peaks in the pause after "game." (it covered the word)
     sfx(load("typing"), T["type"], -3)
-    hit(e_whoosh, T["july"] - 0.075); hit(e_whoosh, T["made"] - 0.4, -3)  # in the pause before "I made" (it masked "made")
+    wend(swoosh(0.4), T["july"] - 0.035)                    # ends on the cut to JULY 2026
+    wend(swoosh(0.4), T["made"] - 0.19, -3)                 # in the pause before "I made", ends as "I" starts (white flash)
     hit(load("ding", 1.5), T["p80"])
     n_sh = 0
     for i in range(3):
@@ -119,10 +131,11 @@ if EAR:
         ts = k / 2.2 * S; k += 1
         if ts >= T["everybody"]: break
         if ts >= T["camera"] + 0.68: hit(e_shut[n_sh % 3], ts, -9); n_sh += 1  # first shutter after "camera in your phone"
-    hit(e_whoosh, T["flipping"] + 0.47, -6)  # after the word "flipping" (it masked it), with the screen roll
-    hit(e_whoosh, T["dropping"] - 0.15)
+    sfx(band(swoosh(0.34, 1500, 7000), 2000, 20000), T["flipping"] - 0.05, -10)  # quiet and high, over the screen roll
+    wend(swoosh(0.35), T["dropping"] - 0.11)               # camera swing to the banana
     slip = T["dropping"] + 0.55
-    hit(load("slip"), slip)
+    d = 0.5; tb = tt(d)                                      # boing with a pitch wobble (earshot jump/spring was a flat 205 Hz bonk)
+    sfx(np.sin(2 * np.pi * np.cumsum(260 + 160 * np.sin(2 * np.pi * 9 * tb) * np.exp(-tb / 0.25)) / SR) * env(d, 0.003, 0.2), slip, -3)
     sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25, -3)  # slide-whistle fall
     e_boom = band(load("boom", 1.8), 45, 20000)                              # earshot boom is nearly all sub-bass: phones would lose it
     crack = band(noise(0.7), 150, 1500) * env(0.7, 0.002, 0.13)              # so add a short mid-range crack on top
@@ -132,7 +145,7 @@ if EAR:
     sfx(e_chime, T["fun"] - 0.05, -3); sfx(e_chime, T["limited"] - 0.1); hit(e_thud, T["limited"] - 0.12, -2)
     e_tom = load("reveal", 0.5)
     for i in range(3): hit(e_tom, T["revealing"] + i * 0.16, -2)
-    hit(e_whoosh, T["coming"] - 0.175); hit(e_pop, T["follow"])
+    wend(swoosh(0.35), T["coming"] + 0.01, -3); hit(e_pop, T["follow"])  # ends on the cut to COMING SOON
 else:
     sfx(pop, T["game"] - 0.03); sfx(chime(), T["game"] + 0.02)
     t = T["type"]
