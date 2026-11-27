@@ -74,6 +74,16 @@ border (~1690 px) and the + FOLLOW button (~1670 px) slightly below the 1650 px 
 Sound effects v4b: earshot effects (assets/sfx) replace the synthesized ones -> renders/not-all-slop_new_sfx.mp4 (same picture).
 For a clean re-render at the new timing later: force_align on the new voice_raw.wav, then the v3 rebuild steps (12 pieces).
 
+## v5 (2026-11-27): no buttons, FOLLOW end card, earshot effects — delivered
+Ben: "Get rid of the buttons completely but add a follow so you don't miss it at the end". The AI-MADE stamp and + FOLLOW pill
+are gone; a yellow FOLLOW / SO YOU DON'T MISS IT title sits in the sky of the last shot (render pieces c8, c9 re-rendered).
+Effects: earshot pop, chime, typing, ding, shutter, thud, toms, explosion (high-passed + 150-1500 Hz crack so phones hear it);
+whoosh and banana boing are synthesized in make_audio.py (earshot's whoosh/fast and jump/spring did not fit).
+Sound reviews: round 1 FAIL (chime on "game.", whoosh timing, sub-only boom), round 2 FAIL (whoosh sound/timing, slip level),
+round 3 PASS: every word >= 6 dB clear of music+effects in 200 Hz-5 kHz, -14.0 LUFS, -2.7 dBTP, 87.13 s, 1080x1920, 30 fps.
+Minor items left (optional): boing and slide whistle stop without a fade (~66.7 s, mostly covered); bomb pop / "limited" chime
+briefly as loud as the voice for ~60 ms inside "other"/"limited"; toms on "revealing" faint on phone speakers.
+
 ## Rebuild from scratch
 ```
 python scripts/voice.py <voice> <speed>      # with /opt/video-tools/venv/bin/python; needs models/kokoro-v1.0.onnx (full model). The 2026-11-25 render used the older per-sentence version (git history): af_heart 1.3, 0.12 s gaps
