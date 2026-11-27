@@ -89,7 +89,7 @@ def chime():
 sfx(pop, T["game"] - 0.03); sfx(chime(), T["game"] + 0.02)
 t = T["type"]
 while t < T["sentence"] + 0.5: sfx(click, t); t += 0.07 + rng.uniform(0, 0.06)
-sfx(whoosh(0.45), T["july"] - 0.3); sfx(whoosh(0.5), T["made"] - 0.35)
+sfx(whoosh(0.45), T["july"] - 0.3); sfx(whoosh(0.4), T["made"] - 0.6, -3)  # in the pause before "I made" (it masked "made")
 sfx(bell(1318.5) + 0.6 * bell(1975.5), T["p80"])
 for i in range(3):
     for k in range(200):
@@ -122,6 +122,10 @@ for x, t0, db in FX:
     g = min(g, 0.5 * v_pk / max(np.max(np.abs(x)), 1e-9))  # short clicks read quiet over 0.4 s; cap their peak at half the voice's
     put(sfx_bus, x * g * 10 ** (db / 20), t0)
 
+# dip music + effects 6 dB under "I made Troll Duels" (the "d" of "made" is soft in the voice and the arena music starts there)
+duck = np.ones(N); i0, i1, rr = int((T["made"] - 0.2) * SR), int((T["made"] + 0.3) * SR), int(0.06 * SR)
+duck[i0:i1] = 0.5; duck[i0 - rr:i0] = np.linspace(1, 0.5, rr); duck[i1:i1 + rr] = np.linspace(0.5, 1, rr)
+music *= duck; sfx_bus *= duck
 mix = voice + music + sfx_bus
 # section check: voice vs music short-term loudness (3 s windows, voiced windows only)
 st3 = pyln.Meter(SR, block_size=3.0); gaps = []
