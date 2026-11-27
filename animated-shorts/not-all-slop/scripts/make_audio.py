@@ -90,31 +90,69 @@ def chime():
     out = np.zeros(int(0.9 * SR))
     for i, f in enumerate([1046.5, 1318.5, 1568.0, 2093.0]): put(out, bell(f), i * 0.06)
     return out
-sfx(pop, T["game"] - 0.03); sfx(chime(), T["game"] + 0.02)
-t = T["type"]
-while t < T["sentence"] + 0.5: sfx(click, t); t += (0.07 + rng.uniform(0, 0.06)) * S
-sfx(whoosh(0.45), T["july"] - 0.3); sfx(whoosh(0.4), T["made"] - 0.6, -3)  # in the pause before "I made" (it masked "made")
-sfx(bell(1318.5) + 0.6 * bell(1975.5), T["p80"])
-for i in range(3):
-    for k in range(200):
-        ts = (k - i * 0.37) / 1.7 * S
-        if T["everybody"] <= ts < T["slop3"]: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # crowd shutters, kept well under the voice
-k = 0
-while True:
-    ts = k / 2.2 * S; k += 1
-    if ts >= T["everybody"]: break
-    if ts >= T["camera"] + 0.68: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # first shutter after "camera in your phone", so "in" stays clear
-sfx(whoosh(0.3), T["flipping"] + 0.32, -6)  # after the word "flipping" (it masked it), with the screen roll
-sfx(whoosh(0.3), T["dropping"] - 0.3)
-slip = T["dropping"] + 0.55
-d = 0.5; tb = tt(d); sfx(np.sin(2 * np.pi * np.cumsum(260 + 160 * np.sin(2 * np.pi * 9 * tb) * np.exp(-tb / 0.25)) / SR) * env(d, 0.003, 0.2), slip)
-sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25)
-boom = lowpass(noise(1.2), 0.05) * env(1.2, 0.003, 0.35) * 3 + np.sin(2 * np.pi * np.cumsum(np.linspace(90, 30, int(1.2 * SR))) / SR) * env(1.2, 0.002, 0.25)
-sfx(boom, BOOM); sfx(pop, T["bomb"] - 0.75)
-sfx(thud, T["exactly"]); sfx(thud, T["also"] + 0.15)
-sfx(chime(), T["fun"] - 0.05); sfx(chime(), T["limited"] - 0.1); sfx(thud * 0.8, T["limited"] - 0.12)
-for i in range(3): sfx(thud * 0.6, T["revealing"] + i * 0.16)
-sfx(whoosh(0.35), T["coming"] - 0.35); sfx(pop, T["follow"] - 0.05)
+SFXDIR = P / "assets" / "sfx"   # effects made with earshot (github.com/Leonxlnx/earshot, MIT): see assets/sfx/README.md
+EAR = (SFXDIR / "pop.wav").exists()
+def load(name, max_d=None, rate=1.0):
+    x, sr = sf.read(SFXDIR / f"{name}.wav"); x = x.mean(1) if x.ndim > 1 else x
+    n = int(len(x) * SR / sr / rate); x = np.interp(np.linspace(0, len(x) - 1, n), np.arange(len(x)), x)
+    if max_d and len(x) > max_d * SR:                                     # long tails would cover the next words
+        x = x[:int(max_d * SR)].copy(); f = int(0.08 * SR); x[-f:] *= np.linspace(1, 0, f)
+    return x
+def hit(x, t, db=0.0): sfx(x, t - np.argmax(np.abs(x)) / SR, db)           # the loudest moment lands on t
+if EAR:
+    e_pop, e_chime, e_whoosh, e_thud = load("pop"), load("chime", 1.3), load("whoosh"), load("thud")
+    e_shut = [load("shutter", rate=r) for r in (1.0, 1.07, 0.94)]
+    hit(e_pop, T["game"]); sfx(e_chime, T["game"] + 0.02)
+    sfx(load("typing"), T["type"], -3)
+    hit(e_whoosh, T["july"] - 0.075); hit(e_whoosh, T["made"] - 0.5, -3)  # in the pause before "I made" (it masked "made")
+    hit(load("ding", 1.5), T["p80"])
+    n_sh = 0
+    for i in range(3):
+        for k in range(200):
+            ts = (k - i * 0.37) / 1.7 * S
+            if T["everybody"] <= ts < T["slop3"]: hit(e_shut[n_sh % 3], ts, -9); n_sh += 1  # crowd shutters, kept well under the voice
+    k = 0
+    while True:
+        ts = k / 2.2 * S; k += 1
+        if ts >= T["everybody"]: break
+        if ts >= T["camera"] + 0.68: hit(e_shut[n_sh % 3], ts, -9); n_sh += 1  # first shutter after "camera in your phone"
+    hit(e_whoosh, T["flipping"] + 0.47, -6)  # after the word "flipping" (it masked it), with the screen roll
+    hit(e_whoosh, T["dropping"] - 0.15)
+    slip = T["dropping"] + 0.55
+    hit(load("slip"), slip)
+    sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25, -3)  # slide-whistle fall
+    hit(load("boom", 1.8), BOOM); hit(e_pop, T["bomb"] - 0.74)
+    hit(e_thud, T["exactly"]); hit(e_thud, T["also"] + 0.15)
+    sfx(e_chime, T["fun"] - 0.05); sfx(e_chime, T["limited"] - 0.1); hit(e_thud, T["limited"] - 0.12, -2)
+    e_tom = load("reveal", 0.5)
+    for i in range(3): hit(e_tom, T["revealing"] + i * 0.16, -2)
+    hit(e_whoosh, T["coming"] - 0.175); hit(e_pop, T["follow"])
+else:
+    sfx(pop, T["game"] - 0.03); sfx(chime(), T["game"] + 0.02)
+    t = T["type"]
+    while t < T["sentence"] + 0.5: sfx(click, t); t += (0.07 + rng.uniform(0, 0.06)) * S
+    sfx(whoosh(0.45), T["july"] - 0.3); sfx(whoosh(0.4), T["made"] - 0.6, -3)  # in the pause before "I made" (it masked "made")
+    sfx(bell(1318.5) + 0.6 * bell(1975.5), T["p80"])
+    for i in range(3):
+        for k in range(200):
+            ts = (k - i * 0.37) / 1.7 * S
+            if T["everybody"] <= ts < T["slop3"]: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # crowd shutters, kept well under the voice
+    k = 0
+    while True:
+        ts = k / 2.2 * S; k += 1
+        if ts >= T["everybody"]: break
+        if ts >= T["camera"] + 0.68: sfx(click * 1.4, ts, -9); sfx(click, ts + 0.05, -9)  # first shutter after "camera in your phone", so "in" stays clear
+    sfx(whoosh(0.3), T["flipping"] + 0.32, -6)  # after the word "flipping" (it masked it), with the screen roll
+    sfx(whoosh(0.3), T["dropping"] - 0.3)
+    slip = T["dropping"] + 0.55
+    d = 0.5; tb = tt(d); sfx(np.sin(2 * np.pi * np.cumsum(260 + 160 * np.sin(2 * np.pi * 9 * tb) * np.exp(-tb / 0.25)) / SR) * env(d, 0.003, 0.2), slip)
+    sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25)
+    boom = lowpass(noise(1.2), 0.05) * env(1.2, 0.003, 0.35) * 3 + np.sin(2 * np.pi * np.cumsum(np.linspace(90, 30, int(1.2 * SR))) / SR) * env(1.2, 0.002, 0.25)
+    sfx(boom, BOOM); sfx(pop, T["bomb"] - 0.75)
+    sfx(thud, T["exactly"]); sfx(thud, T["also"] + 0.15)
+    sfx(chime(), T["fun"] - 0.05); sfx(chime(), T["limited"] - 0.1); sfx(thud * 0.8, T["limited"] - 0.12)
+    for i in range(3): sfx(thud * 0.6, T["revealing"] + i * 0.16)
+    sfx(whoosh(0.35), T["coming"] - 0.35); sfx(pop, T["follow"] - 0.05)
 sfx_bus = np.zeros(N)
 v_pk = np.max(np.abs(voice))
 target = v_mom - 12
