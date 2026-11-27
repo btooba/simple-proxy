@@ -96,15 +96,18 @@ def load(name, max_d=None, rate=1.0):
     x, sr = sf.read(SFXDIR / f"{name}.wav"); x = x.mean(1) if x.ndim > 1 else x
     n = int(len(x) * SR / sr / rate); x = np.interp(np.linspace(0, len(x) - 1, n), np.arange(len(x)), x)
     if max_d and len(x) > max_d * SR:                                     # long tails would cover the next words
-        x = x[:int(max_d * SR)].copy(); f = int(0.08 * SR); x[-f:] *= np.linspace(1, 0, f)
+        x = x[:int(max_d * SR)].copy(); f = int(min(0.25, max_d / 2) * SR); x[-f:] *= np.linspace(1, 0, f)
     return x
+def band(x, lo, hi):
+    X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / SR); X[(f < lo) | (f > hi)] = 0
+    return np.fft.irfft(X, len(x))
 def hit(x, t, db=0.0): sfx(x, t - np.argmax(np.abs(x)) / SR, db)           # the loudest moment lands on t
 if EAR:
     e_pop, e_chime, e_whoosh, e_thud = load("pop"), load("chime", 1.3), load("whoosh"), load("thud")
     e_shut = [load("shutter", rate=r) for r in (1.0, 1.07, 0.94)]
-    hit(e_pop, T["game"]); sfx(e_chime, T["game"] + 0.02)
+    hit(e_pop, T["game"]); sfx(e_chime, T["game"] + 0.25, -4)  # after the pop, so it peaks in the pause after "game." (it covered the word)
     sfx(load("typing"), T["type"], -3)
-    hit(e_whoosh, T["july"] - 0.075); hit(e_whoosh, T["made"] - 0.5, -3)  # in the pause before "I made" (it masked "made")
+    hit(e_whoosh, T["july"] - 0.075); hit(e_whoosh, T["made"] - 0.4, -3)  # in the pause before "I made" (it masked "made")
     hit(load("ding", 1.5), T["p80"])
     n_sh = 0
     for i in range(3):
@@ -121,9 +124,12 @@ if EAR:
     slip = T["dropping"] + 0.55
     hit(load("slip"), slip)
     sfx(chirp(1300, 280, 0.8) * np.minimum(1, tt(0.8) / 0.02) * np.linspace(1, 0.2, int(0.8 * SR)), slip + 0.25, -3)  # slide-whistle fall
-    hit(load("boom", 1.8), BOOM); hit(e_pop, T["bomb"] - 0.74)
+    e_boom = band(load("boom", 1.8), 45, 20000)                              # earshot boom is nearly all sub-bass: phones would lose it
+    crack = band(noise(0.7), 150, 1500) * env(0.7, 0.002, 0.13)              # so add a short mid-range crack on top
+    e_boom = e_boom / np.max(np.abs(e_boom)); e_boom[:len(crack)] += 0.8 * crack / np.max(np.abs(crack))
+    hit(e_boom, BOOM); hit(e_pop, T["bomb"] - 0.74)
     hit(e_thud, T["exactly"]); hit(e_thud, T["also"] + 0.15)
-    sfx(e_chime, T["fun"] - 0.05); sfx(e_chime, T["limited"] - 0.1); hit(e_thud, T["limited"] - 0.12, -2)
+    sfx(e_chime, T["fun"] - 0.05, -3); sfx(e_chime, T["limited"] - 0.1); hit(e_thud, T["limited"] - 0.12, -2)
     e_tom = load("reveal", 0.5)
     for i in range(3): hit(e_tom, T["revealing"] + i * 0.16, -2)
     hit(e_whoosh, T["coming"] - 0.175); hit(e_pop, T["follow"])
